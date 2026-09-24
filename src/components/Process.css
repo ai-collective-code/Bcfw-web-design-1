@@ -1,0 +1,39 @@
+.proc { padding: clamp(60px, 7vw, 100px) 0 clamp(100px, 12vw, 160px); }
+
+.proc__list {
+  position: relative; list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+/* the connecting rail behind the step numbers */
+.proc__list::before {
+  content: ''; position: absolute; left: 40px; right: 40px; top: 52px; height: 2px;
+  background: repeating-linear-gradient(90deg, var(--line-2) 0 8px, transparent 8px 16px);
+}
+.proc__step {
+  position: relative; display: grid; gap: 12px; align-content: start; padding: 26px 24px 30px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line);
+}
+.proc__n {
+  display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; margin-bottom: 8px;
+  background: var(--ink); color: var(--lime); font-family: var(--f-mono); font-size: 16px; font-weight: 500;
+  box-shadow: 0 0 0 8px var(--surface);
+}
+.proc__step h3 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(26px, 2.2vw, 34px); letter-spacing: -0.045em; line-height: 1; }
+.proc__step p { margin: 0; color: var(--ink-2); font-size: 16px; }
+
+.proc__promise {
+  display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); margin-top: 14px;
+  padding: 26px clamp(24px, 3vw, 40px); border-radius: var(--radius); background: var(--indigo); color: #fff;
+}
+.proc__promise strong { font-family: var(--f-display); font-weight: 700; font-size: clamp(64px, 7vw, 110px); letter-spacing: -0.06em; line-height: 0.85; }
+.proc__promise sup { font-size: 0.4em; color: var(--lime); vertical-align: top; }
+.proc__promise p { margin: 0; max-width: 40ch; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.35; }
+
+@media (max-width: 1000px) {
+  .proc__list { grid-template-columns: 1fr 1fr; }
+  .proc__list::before { display: none; }
+}
+@media (max-width: 560px) {
+  .proc__list { grid-template-columns: 1fr; }
+  .proc__promise { flex-direction: column; align-items: flex-start; }
+}

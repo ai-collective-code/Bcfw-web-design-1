@@ -1,0 +1,44 @@
+.arts {
+  padding: clamp(110px, 13vw, 190px) 0 clamp(80px, 9vw, 140px); overflow: hidden;
+  background: radial-gradient(50% 40% at 50% 62%, rgba(155, 140, 255, 0.24), transparent 70%);
+}
+
+/* ---- 3D coverflow ---- */
+.cf {
+  position: relative; height: min(600px, 68vh); perspective: 1400px; perspective-origin: 50% 45%;
+  touch-action: pan-y; user-select: none; outline: none;
+}
+.cf:focus-visible { outline: 2px solid var(--indigo); outline-offset: -6px; border-radius: var(--radius); }
+.cf__card {
+  position: absolute; left: 50%; top: 50%; width: clamp(230px, 25vw, 370px); aspect-ratio: 3 / 4;
+  border-radius: 30px; overflow: hidden; background: var(--surface-2);
+  box-shadow: 0 50px 90px -40px rgba(27, 22, 90, 0.55);
+  transition: transform 0.9s var(--ease-out), opacity 0.6s, box-shadow 0.6s;
+}
+.cf__card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.cf__card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(15, 13, 46, 0.75)); }
+.cf__card.is-active { box-shadow: 0 60px 110px -40px rgba(75, 63, 224, 0.65), 0 0 0 4px var(--lime); }
+.cf__label {
+  position: absolute; left: 18px; bottom: 16px; z-index: 1;
+  font-family: var(--f-display); font-weight: 700; font-size: 28px; letter-spacing: -0.04em; color: #fff;
+}
+
+.cf__info { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-top: 30px; }
+.cf__meta { display: grid; gap: 14px; }
+.cf__meta h3 { font-size: clamp(52px, 6vw, 96px); }
+.cf__meta p { margin: 0; max-width: 48ch; font-size: 19px; color: var(--ink-2); }
+.cf__credit { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+.cf__nav { display: flex; gap: 10px; }
+.cf__nav button {
+  width: 64px; height: 64px; border-radius: 50%; font-size: 22px;
+  border: 1px solid var(--line-2); background: var(--surface);
+  transition: background 0.3s, color 0.3s, transform 0.4s var(--ease-out);
+}
+.cf__nav button:hover { background: var(--ink); color: var(--lime); transform: scale(1.06); }
+
+@media (max-width: 700px) {
+  .cf { height: 440px; }
+  .cf__card { width: 62vw; }
+  .cf__info { flex-direction: column; align-items: stretch; }
+  .cf__nav { justify-content: flex-end; }
+}

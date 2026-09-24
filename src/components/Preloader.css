@@ -1,0 +1,43 @@
+.pre { position: fixed; inset: 0; z-index: 200; pointer-events: all; }
+
+.pre__panel { position: absolute; inset: 0; will-change: transform; }
+.pre__panel--back { background: var(--indigo); border-radius: 0 0 48px 48px; }
+.pre__panel--main {
+  background:
+    radial-gradient(50% 40% at 50% 50%, rgba(155, 140, 255, 0.22), transparent 70%),
+    var(--bg);
+  border-radius: 0 0 48px 48px;
+  display: grid; grid-template-rows: auto 1fr auto;
+  padding: calc(24px + env(safe-area-inset-top)) var(--gutter) calc(28px + env(safe-area-inset-bottom));
+}
+
+.pre__top { display: flex; justify-content: space-between; align-items: center; gap: 16px; color: var(--ink-2); }
+.pre__brand { display: inline-flex; align-items: flex-start; gap: 3px; font-family: var(--f-display); font-weight: 800; font-size: 24px; letter-spacing: -0.04em; color: var(--ink); }
+.pre__brand i { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 2px var(--ink); margin-top: 4px; }
+
+.pre__center { display: grid; place-items: center; align-content: center; gap: 22px; text-align: center; }
+.pre__word {
+  font-family: var(--f-indic); font-weight: 700; font-size: clamp(56px, 11vw, 150px); line-height: 1.15;
+  background: linear-gradient(135deg, var(--ink) 30%, var(--indigo) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: preWord 0.16s var(--ease-out) both;
+}
+@keyframes preWord { from { transform: translateY(10px) scale(0.98); } }
+
+.pre__bottom { display: flex; align-items: flex-end; gap: clamp(18px, 4vw, 56px); }
+.pre__count {
+  font-family: var(--f-display); font-weight: 700; letter-spacing: -0.05em;
+  font-size: clamp(88px, 13vw, 180px); line-height: 0.8; font-variant-numeric: tabular-nums;
+}
+.pre__count small { font-size: 0.3em; color: var(--ink-3); margin-left: 8px; letter-spacing: -0.02em; }
+.pre__meta { flex: 1; display: grid; gap: 12px; padding-bottom: 10px; color: var(--ink-2); }
+.pre__bar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.pre__bar i {
+  display: block; height: 100%; border-radius: 99px; transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--indigo), var(--violet), var(--lime));
+}
+
+@media (max-width: 640px) {
+  .pre__top .mono { display: none; }
+  .pre__bottom { flex-direction: column; align-items: stretch; gap: 12px; }
+}

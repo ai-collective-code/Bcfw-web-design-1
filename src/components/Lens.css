@@ -1,0 +1,37 @@
+.lens { padding: 0 10px; }
+.lens__frame {
+  position: relative; overflow: hidden; border-radius: var(--radius);
+  padding: clamp(80px, 10vw, 140px) 0 clamp(40px, 5vw, 60px);
+  background:
+    radial-gradient(45% 60% at 10% 0%, rgba(198, 244, 50, 0.16), transparent 70%),
+    radial-gradient(50% 70% at 100% 100%, rgba(108, 97, 255, 0.5), transparent 70%),
+    var(--night);
+  color: var(--on-night);
+}
+.lens__top { display: grid; gap: 24px; max-width: 1100px; }
+.lens__head { font-size: clamp(44px, 6.4vw, 100px); color: #fff; }
+
+.lens__grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: clamp(50px, 6vw, 80px) 0 0;
+}
+.lens__stat {
+  display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 12px;
+  padding: 26px 24px 28px; border-radius: 26px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid var(--night-line);
+}
+.lens__stat dd {
+  margin: 0; font-family: var(--f-display); font-weight: 700; letter-spacing: -0.06em; line-height: 0.9;
+  font-size: clamp(64px, 7vw, 112px); color: #fff; font-variant-numeric: tabular-nums;
+}
+.lens__stat sup { font-size: 0.42em; color: var(--lime); letter-spacing: -0.02em; vertical-align: top; margin-left: 2px; }
+.lens__stat dt { font-size: 16px; color: var(--on-night-2); max-width: 22ch; }
+
+.lens__foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;
+  margin-top: 40px; padding-top: 34px; border-top: 1px solid var(--night-line);
+}
+.lens__foot p { margin: 0; max-width: 60ch; font-family: var(--f-serif); font-style: italic; font-size: clamp(21px, 1.8vw, 26px); line-height: 1.35; color: #fff; }
+.lens__src { margin: 26px 0 0; color: rgba(244, 243, 255, 0.45); }
+
+@media (max-width: 1000px) { .lens__grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .lens__stat { padding: 20px 18px; } .lens__stat dt { font-size: 14px; } }

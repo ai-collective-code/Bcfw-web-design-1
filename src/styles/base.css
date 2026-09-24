@@ -1,0 +1,171 @@
+/* ------------------------------------------------------------------
+   Design system — "Neel"
+   Indigo is India's own dye (the word comes from indikon, "from India"),
+   so it anchors the palette. Lime is the single loud accent; pink, teal and
+   sky only appear as region colours. No orange anywhere.
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #f4f5f9;
+  --surface: #ffffff;
+  --surface-2: #ecedf5;
+  --ink: #0b0b1f;
+  --ink-2: #4a4b66;
+  --ink-3: #8b8ca6;
+  --line: #e1e2ee;
+  --line-2: #d0d1e2;
+
+  --night: #0f0d2e;
+  --night-2: #19164a;
+  --night-line: rgba(255, 255, 255, 0.12);
+  --on-night: #f4f3ff;
+  --on-night-2: rgba(244, 243, 255, 0.66);
+
+  --indigo: #4b3fe0;
+  --indigo-2: #6c61ff;
+  --indigo-soft: #e9e7ff;
+  --violet: #9b8cff;
+  --lime: #c6f432;
+  --lime-2: #b2e01c;
+  --pink: #e83e8c;
+  --teal: #0f9d8a;
+  --sky: #38bdf8;
+
+  --f-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --f-serif: 'Instrument Serif', Georgia, serif;
+  --f-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'Geist Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --f-indic: 'Nirmala UI', 'Noto Sans', 'Kohinoor Devanagari', 'Mangal', system-ui, sans-serif;
+
+  --gutter: clamp(16px, 3.6vw, 56px);
+  --radius: 32px;
+  --radius-md: 22px;
+  --radius-sm: 14px;
+  --shadow: 0 1px 2px rgba(11, 11, 31, 0.04), 0 18px 50px -18px rgba(11, 11, 31, 0.18);
+  --shadow-lg: 0 2px 6px rgba(11, 11, 31, 0.05), 0 40px 90px -30px rgba(27, 22, 90, 0.35);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+html.is-locked { overflow: hidden; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: rgba(75, 63, 224, 0.2);
+  overflow-x: clip;
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+::selection { background: var(--lime); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; border-radius: 6px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+.shell { width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ------------------------------------------------------------------
+   Type
+   ------------------------------------------------------------------ */
+.display {
+  margin: 0; font-family: var(--f-display); font-weight: 700;
+  font-variation-settings: 'opsz' 96; letter-spacing: -0.045em; line-height: 0.95;
+}
+.display em, .rich em {
+  font-family: var(--f-serif); font-style: italic; font-weight: 400;
+  letter-spacing: -0.015em; color: var(--indigo);
+}
+.on-night .display em, .on-night .rich em { color: var(--lime); }
+
+/* Mono tag: "(01) Why local" */
+.tag {
+  display: inline-flex; align-items: center; gap: 10px; width: fit-content;
+  padding: 7px 14px 7px 10px; border: 1px solid var(--line-2); border-radius: 999px;
+  font-family: var(--f-mono); font-size: 12.5px; letter-spacing: 0.02em; color: var(--ink-2);
+  background: rgba(255, 255, 255, 0.6);
+}
+.tag::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 0 4px var(--indigo-soft); }
+.tag b { font-weight: 500; color: var(--ink); }
+.on-night .tag { border-color: var(--night-line); color: var(--on-night-2); background: rgba(255, 255, 255, 0.05); }
+.on-night .tag b { color: var(--on-night); }
+.on-night .tag::before { background: var(--lime); box-shadow: 0 0 0 4px rgba(198, 244, 50, 0.18); }
+
+.mono { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: 0.02em; }
+
+/* Section head: tag, headline, and an optional side note */
+.sec-head {
+  display: grid; grid-template-columns: 1.5fr 1fr; align-items: end; gap: 26px 60px;
+  margin-bottom: clamp(40px, 5vw, 70px);
+}
+.sec-head__main { display: grid; gap: 22px; }
+.sec-head h2 { font-size: clamp(46px, 6.6vw, 104px); }
+.sec-head p { margin: 0; max-width: 42ch; color: var(--ink-2); font-size: 18px; }
+.on-night .sec-head p { color: var(--on-night-2); }
+.word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.word > span { display: inline-block; will-change: transform; }
+
+/* ------------------------------------------------------------------
+   Buttons — pills with an arrow bubble
+   ------------------------------------------------------------------ */
+.btn {
+  position: relative; display: inline-flex; align-items: center; gap: 14px;
+  height: 56px; padding: 0 8px 0 24px; border-radius: 999px;
+  font-weight: 500; font-size: 16px; letter-spacing: -0.01em; white-space: nowrap;
+  transition: transform 0.4s var(--ease-out), background 0.3s, color 0.3s, box-shadow 0.4s;
+}
+.btn__arrow {
+  display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+  overflow: hidden; position: relative; font-size: 17px;
+}
+.btn__arrow i { font-style: normal; transition: transform 0.45s var(--ease-out); }
+.btn__arrow i + i { position: absolute; transform: translate(-150%, 150%); }
+.btn:hover .btn__arrow i:first-child { transform: translate(150%, -150%); }
+.btn:hover .btn__arrow i + i { transform: none; }
+.btn--down .btn__arrow i + i { transform: translateY(-150%); }
+.btn--down:hover .btn__arrow i:first-child { transform: translateY(150%); }
+.btn--down:hover .btn__arrow i + i { transform: none; }
+
+.btn--ink { background: var(--ink); color: #fff; }
+.btn--ink .btn__arrow { background: var(--lime); color: var(--ink); }
+.btn--ink:hover { box-shadow: 0 16px 40px -12px rgba(11, 11, 31, 0.45); }
+.btn--lime { background: var(--lime); color: var(--ink); }
+.btn--lime .btn__arrow { background: var(--ink); color: var(--lime); }
+.btn--lime:hover { box-shadow: 0 16px 40px -12px rgba(198, 244, 50, 0.6); }
+.btn--ghost { border: 1px solid var(--line-2); background: var(--surface); }
+.btn--ghost .btn__arrow { background: var(--surface-2); }
+.on-night .btn--ghost { background: rgba(255, 255, 255, 0.06); border-color: var(--night-line); color: var(--on-night); }
+.on-night .btn--ghost .btn__arrow { background: rgba(255, 255, 255, 0.1); }
+
+/* Generic reveal (see App) */
+[data-reveal] { opacity: 0; transform: translateY(28px); }
+.no-motion [data-reveal] { opacity: 1; transform: none; }
+
+/* Scroll progress */
+.progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 120;
+  background: linear-gradient(90deg, var(--indigo), var(--violet), var(--lime));
+  transform-origin: 0 50%; transform: scaleX(0); pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .sec-head { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

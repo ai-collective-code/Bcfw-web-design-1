@@ -1,0 +1,11 @@
+.cur { position: fixed; top: 0; left: 0; z-index: 300; pointer-events: none; }
+.cur span {
+  position: absolute; left: 14px; top: 14px; white-space: nowrap;
+  padding: 8px 14px; border-radius: 999px;
+  background: var(--lime); color: var(--ink);
+  font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.04em;
+  box-shadow: 0 10px 30px -8px rgba(11, 11, 31, 0.35);
+  transform: scale(0.4); opacity: 0; transform-origin: 0 0;
+  transition: transform 0.35s var(--ease-out), opacity 0.25s;
+}
+.cur.is-on span { transform: scale(1); opacity: 1; }

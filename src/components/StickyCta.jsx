@@ -38,7 +38,7 @@ export default function StickyCta() {
         <span className="scta__dot" aria-hidden="true" />
         {parts.length ? <>Your brief · <b>{parts.join(' · ')}</b></> : <>Plan your India campaign</>}
       </a>
-      <a href={BRAND.inquiry} className="scta__go" target="_blank" rel="noreferrer" tabIndex={shown ? 0 : -1}>
+      <a href={BRAND.contact} className="scta__go" onClick={onAnchor} tabIndex={shown ? 0 : -1}>
         Start <span aria-hidden="true">↗</span>
       </a>
     </div>

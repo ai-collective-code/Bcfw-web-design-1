@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import SectionHead from './SectionHead.jsx';
-import { lockScroll } from '../lib/motion.js';
+import { lockScroll, scrollToTarget } from '../lib/motion.js';
 import { FESTIVALS, REGIONS, BRAND, wm, langOf } from '../data/content.js';
 import { brief, useBrief } from '../lib/brief.js';
 import './Atlas.css';
@@ -107,7 +107,6 @@ function Drawer({ f, onClose, onStep, position }) {
         </div>
         <div className="drw__img" key={`img-${f.id}`}>
           <img src={wm(f.file, 960)} alt={`${f.festival}, ${f.state}`} decoding="async" />
-          <span className="drw__region">{f.region} · {f.kind === 'UT' ? 'Union territory' : 'State'}</span>
         </div>
         <div className="drw__text" key={`txt-${f.id}`}>
           <h3 id="drw-title" className="display">{f.festival}</h3>
@@ -124,7 +123,17 @@ function Drawer({ f, onClose, onStep, position }) {
               {' '}Plan it before the season starts and be first to the feed.
             </p>
             <div className="drw__ctas">
-              <a href={BRAND.inquiry} className="btn btn--lime" target="_blank" rel="noreferrer">
+              <a
+                href={BRAND.contact}
+                className="btn btn--lime"
+                onClick={(e) => {
+                  e.preventDefault();
+                  brief.addRegion(f.region);
+                  onClose();
+                  // The drawer's cleanup restarts scrolling; wait for it before gliding to the form.
+                  setTimeout(() => scrollToTarget(BRAND.contact), 60);
+                }}
+              >
                 Plan a campaign in {f.state}
                 <span className="btn__arrow" aria-hidden="true"><i>↗</i><i>↗</i></span>
               </a>

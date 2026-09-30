@@ -2,20 +2,37 @@ import { useMemo, useState } from 'react';
 import SectionHead from './SectionHead.jsx';
 import { FESTIVALS, REGIONS, FORMATS, MONTHS, BRAND } from '../data/content.js';
 import { brief, useBrief } from '../lib/brief.js';
+import { scrollToTarget } from '../lib/motion.js';
 import { Arrow } from './ui.jsx';
 import './Brief.css';
 
 const ACCENT = Object.fromEntries(REGIONS.map((r) => [r.key, r.accent]));
 const MAX_MOMENTS = 8;
+const EMAIL_RE = /^[^\s@<>()]+@[^\s@<>()]+\.[^\s@<>()]{2,}$/;
+const EMPTY = { name: '', email: '', company: '', phone: '', message: '', website: '' };
+
+function Field({ id, label, error, textarea, ...input }) {
+  const Tag = textarea ? 'textarea' : 'input';
+  return (
+    <label className={`field ${textarea ? 'field--wide' : ''} ${error ? 'has-error' : ''}`} htmlFor={id}>
+      <span>{label}</span>
+      <Tag id={id} name={id} aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-err` : undefined} {...input} />
+      {error && <em id={`${id}-err`}>{error}</em>}
+    </label>
+  );
+}
 
 /**
- * Brief builder. Everything in the summary is computed from the page's own data —
- * markets from the atlas, languages from BCF's list, moments from the calendar —
- * so the numbers a visitor sees are real, not a sales estimate.
+ * Brief builder and the page's query form. Everything in the summary is computed from the
+ * page's own data — markets from the atlas, languages from BCF's list, moments from the
+ * calendar — and the whole brief is emailed to the team through /api/inquiry.
  */
 export default function Brief() {
   const { regions, month, formats } = useBrief();
-  const [copied, setCopied] = useState(false);
+  const [form, setForm] = useState(EMPTY);
+  const [status, setStatus] = useState('idle');
+  const [errors, setErrors] = useState({});
+  const [preview, setPreview] = useState(false);
 
   const summary = useMemo(() => {
     const markets = FESTIVALS.filter((f) => regions.includes(f.region));
@@ -26,40 +43,81 @@ export default function Brief() {
 
   const empty = regions.length === 0;
   const when = month >= 0 ? MONTHS[month] : 'Always-on';
+  const sending = status === 'sending';
+  const sent = status === 'sent';
 
-  const text = [
-    'Campaign brief — built on the BCF regional page',
-    `Markets: ${regions.join(', ') || '—'} (${summary.markets.length} states & UTs)`,
-    `Languages: ${summary.langs.join(', ') || '—'}`,
-    `Moment: ${when}${summary.moments.length ? ` — ${summary.moments.map((f) => `${f.festival} (${f.state})`).join(', ')}` : ''}`,
-    `Formats: ${formats.join(', ') || 'Open to recommendations'}`,
-  ].join('\n');
-
-  const send = () => {
-    // Open synchronously inside the click so pop-up blockers allow it.
-    window.open(BRAND.inquiry, '_blank', 'noopener');
-    navigator.clipboard?.writeText(text).then(() => setCopied(true), () => setCopied(false));
+  const set = (key) => (e) => {
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+    if (errors[key]) setErrors((x) => ({ ...x, [key]: undefined }));
   };
 
+  const showErrors = (errs) => {
+    setErrors(errs);
+    scrollToTarget('#inquiry');
+    document.getElementById(Object.keys(errs)[0])?.focus({ preventScroll: true });
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (sending) return;
+    const local = {};
+    if (!form.name.trim()) local.name = 'Please tell us your name.';
+    if (!EMAIL_RE.test(form.email.trim())) local.email = 'Please enter a valid email address.';
+    if (Object.keys(local).length) { showErrors(local); return; }
+    setStatus('sending');
+    setErrors({});
+    try {
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          brief: {
+            markets: regions,
+            languages: summary.langs,
+            moment: when,
+            moments: summary.moments.slice(0, 20).map((f) => `${f.festival} (${f.state})`),
+            formats,
+          },
+          page: window.location.href,
+        }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (res.ok && out.ok) {
+        setPreview(Boolean(out.preview));
+        setStatus('sent');
+      } else if (res.status === 422 && out.errors) {
+        setStatus('idle');
+        showErrors(out.errors);
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  const again = () => { setForm((f) => ({ ...f, message: '' })); setStatus('idle'); };
   const allIndia = () => brief.setRegions(regions.length === REGIONS.length ? [] : REGIONS.map((r) => r.key));
 
   return (
     <section className="brief" id="brief" aria-labelledby="brief-title">
       <div className="shell">
         <SectionHead id="brief-title" n="07" label="Brief builder" title="Plan your India campaign *in 30 seconds.*">
-          Pick your markets, your moment and your formats. We turn it into a brief you can send straight to our team.
+          Pick your markets, your moment and your formats, add where we should reply — and it goes straight to our team.
         </SectionHead>
 
         <div className="brief__grid">
-          <div className="brief__steps">
+          <form className="brief__steps" id="brief-form" onSubmit={submit} noValidate>
             <fieldset className="brief__step">
               <legend><span className="brief__num">1</span> Where do you want to win?</legend>
               <div className="brief__chips">
-                <button className={`chip chip--all ${regions.length === REGIONS.length ? 'is-on' : ''}`} onClick={allIndia} aria-pressed={regions.length === REGIONS.length}>
+                <button type="button" className={`chip chip--all ${regions.length === REGIONS.length ? 'is-on' : ''}`} onClick={allIndia} aria-pressed={regions.length === REGIONS.length}>
                   All India
                 </button>
                 {REGIONS.map((r) => (
                   <button
+                    type="button"
                     key={r.key}
                     className={`chip ${regions.includes(r.key) ? 'is-on' : ''}`}
                     style={{ '--accent': r.accent }}
@@ -75,9 +133,9 @@ export default function Brief() {
             <fieldset className="brief__step">
               <legend><span className="brief__num">2</span> When is the moment?</legend>
               <div className="brief__chips">
-                <button className={`chip ${month < 0 ? 'is-on' : ''}`} onClick={() => brief.setMonth(-1)} aria-pressed={month < 0}>Always-on</button>
+                <button type="button" className={`chip ${month < 0 ? 'is-on' : ''}`} onClick={() => brief.setMonth(-1)} aria-pressed={month < 0}>Always-on</button>
                 {MONTHS.map((m, i) => (
-                  <button key={m} className={`chip ${month === i ? 'is-on' : ''}`} onClick={() => brief.setMonth(i)} aria-pressed={month === i}>
+                  <button type="button" key={m} className={`chip ${month === i ? 'is-on' : ''}`} onClick={() => brief.setMonth(i)} aria-pressed={month === i}>
                     {m.slice(0, 3)}
                   </button>
                 ))}
@@ -89,6 +147,7 @@ export default function Brief() {
               <div className="brief__chips">
                 {FORMATS.map((f) => (
                   <button
+                    type="button"
                     key={f.head}
                     className={`chip ${formats.includes(f.head) ? 'is-on' : ''}`}
                     onClick={() => brief.toggleFormat(f.head)}
@@ -99,12 +158,48 @@ export default function Brief() {
                 ))}
               </div>
             </fieldset>
-          </div>
+
+            <fieldset className="brief__step" id="inquiry">
+              <legend><span className="brief__num">4</span> Where should we reply?</legend>
+              {sent ? (
+                <div className="brief__done" role="status">
+                  <b>Thanks, {form.name.split(' ')[0]} — your brief is with our team.</b>
+                  <p>We’ll reply to <span>{form.email}</span>.</p>
+                  {preview && <p className="brief__preview mono">Local preview: Gmail isn’t connected on this machine, so the email was printed in the dev-server terminal instead of sent.</p>}
+                  <button type="button" className="brief__again" onClick={again}>Send another query</button>
+                </div>
+              ) : (
+                <>
+                  <div className="brief__fields">
+                    <Field id="name" label="Your name *" value={form.name} onChange={set('name')} error={errors.name} autoComplete="name" required maxLength={120} />
+                    <Field id="email" label="Work email *" type="email" value={form.email} onChange={set('email')} error={errors.email} autoComplete="email" required maxLength={200} />
+                    <Field id="company" label="Company / brand" value={form.company} onChange={set('company')} autoComplete="organization" maxLength={160} />
+                    <Field id="phone" label="Phone" type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel" maxLength={40} />
+                    <Field id="message" label="Tell us about the campaign" textarea rows={4} value={form.message} onChange={set('message')} maxLength={5000}
+                      placeholder="Launch, budget range, timelines — anything that helps." />
+                    {/* Honeypot: invisible to people, irresistible to form bots. */}
+                    <label className="brief__trap" aria-hidden="true">
+                      Website <input name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={set('website')} />
+                    </label>
+                  </div>
+                  <button type="submit" className="btn btn--ink brief__submit" disabled={sending}>
+                    {sending ? 'Sending…' : 'Send my brief'} <Arrow />
+                  </button>
+                  {status === 'error' && (
+                    <p className="brief__error" role="alert">
+                      Couldn’t send just now — please try again in a minute, or use the{' '}
+                      <a href={BRAND.inquiry} target="_blank" rel="noreferrer">form on bcfworks.com</a>.
+                    </p>
+                  )}
+                </>
+              )}
+            </fieldset>
+          </form>
 
           <aside className="brief__card on-night" aria-live="polite">
             <div className="brief__card-top">
               <span className="tag"><b>Your brief</b> {when}</span>
-              {!empty && <button className="brief__reset" onClick={() => { brief.reset(); setCopied(false); }}>Reset</button>}
+              {!empty && !sent && <button type="button" className="brief__reset" onClick={() => brief.reset()}>Reset</button>}
             </div>
 
             <dl className="brief__stats">
@@ -145,12 +240,14 @@ export default function Brief() {
               </div>
             )}
 
-            <button className="btn btn--lime brief__send" onClick={send} disabled={empty}>
-              {copied ? 'Brief copied — form opened' : 'Copy brief & open the form'} <Arrow />
-            </button>
-            <p className="brief__hint mono">
-              The inquiry form lives on bcfworks.com. Paste your brief into “Tell us more”.
-            </p>
+            {sent ? (
+              <p className="brief__sent">Brief sent ✓</p>
+            ) : (
+              <button type="submit" form="brief-form" className="btn btn--lime brief__send" disabled={sending}>
+                {sending ? 'Sending…' : 'Send this brief'} <Arrow />
+              </button>
+            )}
+            <p className="brief__hint mono">Goes straight to our team’s inbox. Add your details in step 4.</p>
           </aside>
         </div>
       </div>

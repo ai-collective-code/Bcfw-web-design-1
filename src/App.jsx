@@ -10,6 +10,7 @@ import Problem from './components/Problem.jsx';
 import Lens from './components/Lens.jsx';
 import Services from './components/Services.jsx';
 import Formats from './components/Formats.jsx';
+import Folio from './components/Folio.jsx';
 import Journey from './components/Journey.jsx';
 import Regions from './components/Regions.jsx';
 import Calendar from './components/Calendar.jsx';
@@ -89,6 +90,7 @@ export default function App() {
         <Lens />
         <Services />
         <Formats />
+        <Folio />
         <Journey />
         <Regions />
         <Calendar />

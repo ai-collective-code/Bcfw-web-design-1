@@ -8,6 +8,7 @@ const LINKS = [
   ['Why regional', '#problem'],
   ['Services', '#services'],
   ['Formats', '#formats'],
+  ['Work', '#work'],
   ['Markets', '#regions'],
   ['Calendar', '#calendar'],
   ['FAQ', '#faq'],
@@ -55,7 +56,7 @@ export default function Nav() {
             ))}
           </nav>
 
-          <a href={BRAND.inquiry} className="btn btn--ink nav__cta" target="_blank" rel="noreferrer">
+          <a href={BRAND.contact} className="btn btn--ink nav__cta" onClick={onAnchor}>
             Start a campaign <Arrow />
           </a>
 
@@ -79,7 +80,7 @@ export default function Nav() {
             </a>
           ))}
         </nav>
-        <a href={BRAND.inquiry} className="btn btn--lime drawer__cta" target="_blank" rel="noreferrer" tabIndex={open ? 0 : -1}>
+        <a href={BRAND.contact} className="btn btn--lime drawer__cta" onClick={go} tabIndex={open ? 0 : -1}>
           Start a campaign <Arrow />
         </a>
       </div>

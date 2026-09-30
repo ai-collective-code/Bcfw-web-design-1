@@ -12,13 +12,16 @@ export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', '
 /*
  * Where the claims come from. Everything BCF says about itself on this page —
  * 22+ languages, 72-hour turnaround, 10x output, the nine formats, the market
- * figures — is lifted from bcfworks.com (bcfworks-build/_html). Nothing here is
- * invented: no clients, no case results, no testimonials. 36 = 28 states + 8 UTs.
+ * figures — is lifted from bcfworks.com (bcfworks-build/_html). Clients, awards and
+ * past work come only from BCF's own portfolio deck (see folio.js). Nothing is
+ * invented: no case results, no testimonials. 36 = 28 states + 8 UTs.
  */
 export const BRAND = {
   name: 'BCF',
   full: 'Bharat Content Fireworks',
   tagline: 'Manufacturers of Regional Stories. At Scale.',
+  // Every CTA lands on the brief builder, whose step 4 emails the team (netlify/functions/inquiry.mjs).
+  contact: '#brief',
   inquiry: 'https://bcfworks.com/#inquiry',
   site: 'https://bcfworks.com',
   work: 'https://bcfworks.com/#stories',
@@ -306,11 +309,11 @@ export const FAQS = [
   },
   {
     q: 'Can we see your work?',
-    a: 'Yes, on bcfworks.com. In the interest of transparency: BCF is a new company, and the work shown there is made by the directors, writers and creators who form our collective.',
+    a: 'Yes — the portfolio above: scripted films, AI production, activations, unscripted and corporate work for brands including Dabur, ITC, Lenskart and Nykaa. It is our team’s track record, including the award-winning work our founder made at ICE Media Lab, his first content shop.',
   },
   {
     q: 'How do we start?',
-    a: 'Send a brief through the inquiry form on bcfworks.com — or build one with the brief builder above and paste it in. Tell us the markets, the moment and the format; we come back with a story worth telling.',
+    a: 'Build a brief in the brief builder above and send it — it comes straight to our team’s inbox. Tell us the markets, the moment and the format; we come back with a story worth telling.',
   },
 ];
 

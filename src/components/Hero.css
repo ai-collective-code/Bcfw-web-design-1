@@ -33,11 +33,6 @@
   background: var(--night-2); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
 }
 .wall__card img { width: 100%; height: 100%; object-fit: cover; }
-.wall__card figcaption {
-  position: absolute; left: 10px; bottom: 10px; padding: 6px 10px; border-radius: 999px;
-  background: rgba(15, 13, 46, 0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  font-family: var(--f-mono); font-size: 11px; color: #fff;
-}
 
 .hero__shade {
   position: absolute; inset: 0; pointer-events: none;
@@ -72,7 +67,6 @@
 .hero__tags span { font-weight: 600; font-size: 14px; color: #fff; }
 .hero__tags em { font-style: normal; font-family: var(--f-mono); font-size: 12px; color: var(--on-night-2); }
 @keyframes tagFloat { from { transform: translateY(-6px); } to { transform: translateY(8px); } }
-.wall__card figcaption span { color: var(--lime); }
 
 .hero__stats {
   position: absolute; right: clamp(16px, 3vw, 40px); bottom: clamp(16px, 3vw, 40px); z-index: 2;

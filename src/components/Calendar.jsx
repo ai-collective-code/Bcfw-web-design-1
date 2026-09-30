@@ -90,7 +90,6 @@ export default function Calendar() {
                 >
                   <span className="radar__img">
                     <img src={wm(f.file, 500)} alt="" loading="lazy" decoding="async" />
-                    <span className="radar__region">{f.region}</span>
                   </span>
                   <strong>{f.festival}</strong>
                   <span className="radar__meta">{f.state} · <span className="mono">{f.when}</span></span>

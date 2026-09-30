@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { gsap, useGSAP, onAnchor, isTouch, prefersReducedMotion } from '../lib/motion.js';
-import { HERO_WALL, BRAND, wm, langOf } from '../data/content.js';
+import { HERO_WALL, BRAND, wm } from '../data/content.js';
 import { Words, Arrow } from './ui.jsx';
 import './Hero.css';
 
@@ -91,7 +91,6 @@ export default function Hero({ ready }) {
                     {[...col, ...col].map((f, i) => (
                       <figure className="wall__card" key={`${f.id}-${i}`}>
                         <img src={wm(f.file, 500)} alt="" draggable="false" decoding="async" />
-                        <figcaption>{f.festival}{langOf(f.state) && <span> · {langOf(f.state)}</span>}</figcaption>
                       </figure>
                     ))}
                   </div>
@@ -121,7 +120,7 @@ export default function Hero({ ready }) {
             sounds local in every state, not dubbed.
           </p>
           <div className="hero__ctas" data-hi>
-            <a href={BRAND.inquiry} className="btn btn--lime" target="_blank" rel="noreferrer">
+            <a href={BRAND.contact} className="btn btn--lime" onClick={onAnchor}>
               Start your campaign <Arrow />
             </a>
             <a href="#brief" className="btn btn--ghost btn--down" onClick={onAnchor}>

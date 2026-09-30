@@ -161,7 +161,7 @@ export default function Journey() {
             <p className="display"><Rich text="Your brief, *next?*" /></p>
             <p>Tell us the markets and the moment. We originate every version in parallel — so a thirteen-market rollout still lands on the day.</p>
             <div className="jr__ctas">
-              <a href={BRAND.inquiry} className="btn btn--lime" target="_blank" rel="noreferrer">Start a multi-market campaign <Arrow /></a>
+              <a href={BRAND.contact} className="btn btn--lime" onClick={onAnchor}>Start a multi-market campaign <Arrow /></a>
               <a href="#brief" className="btn btn--ghost btn--down" onClick={onAnchor}>Build your brief <Arrow ch="↓" /></a>
             </div>
           </div>

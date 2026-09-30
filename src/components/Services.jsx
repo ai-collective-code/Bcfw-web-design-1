@@ -1,6 +1,7 @@
 import SectionHead from './SectionHead.jsx';
 import { PILLARS, BRAND, wm } from '../data/content.js';
 import { Arrow } from './ui.jsx';
+import { onAnchor } from '../lib/motion.js';
 import './Services.css';
 
 /** What BCF does: three pillars, each with the operating number BCF commits to. */
@@ -25,7 +26,7 @@ export default function Services() {
               </div>
               <h3>{p.head}</h3>
               <p>{p.body}</p>
-              <a className="pillar__link" href={BRAND.inquiry} target="_blank" rel="noreferrer">
+              <a className="pillar__link" href={BRAND.contact} onClick={onAnchor}>
                 Talk to us about {p.head.toLowerCase()} <span aria-hidden="true">↗</span>
               </a>
             </article>
@@ -34,7 +35,7 @@ export default function Services() {
 
         <div className="svc__band" data-reveal>
           <p><b>Regional at scale.</b> A Tamil film, a Marathi reel, a Punjabi festival campaign and a Bengali brand story — produced simultaneously.</p>
-          <a href={BRAND.inquiry} className="btn btn--ink" target="_blank" rel="noreferrer">Start your campaign <Arrow /></a>
+          <a href={BRAND.contact} className="btn btn--ink" onClick={onAnchor}>Start your campaign <Arrow /></a>
         </div>
       </div>
     </section>

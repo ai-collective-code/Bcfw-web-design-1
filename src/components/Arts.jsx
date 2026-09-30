@@ -79,7 +79,6 @@ export default function Arts() {
               aria-current={o === 0}
             >
               <img src={wm(a.img.file, 960)} alt="" decoding="async" draggable="false" />
-              <span className="cf__label">{a.name}</span>
             </button>
           );
         })}

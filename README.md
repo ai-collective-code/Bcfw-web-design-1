@@ -15,6 +15,23 @@ npm run build    # static output in dist/
 
 Registered in `.claude/launch.json` as **Bharat Utsav**.
 
+## Query emails (backend)
+
+Every CTA scrolls to the brief builder; its step 4 posts the brief and the visitor’s details to
+`/api/inquiry` — a Netlify Function (`netlify/functions/inquiry.mjs`) that emails the team through
+Gmail SMTP. Reply-To is the visitor, so answering is one click. Visitors are never a recipient, so
+the form can’t be used to send mail to anyone else. A hidden honeypot field silently drops bots.
+
+Setup, once:
+
+1. On the Gmail account that should send the mail, turn on 2-Step Verification, then create an app
+   password at myaccount.google.com/apppasswords.
+2. Netlify → Site configuration → Environment variables: `GMAIL_USER` (that address),
+   `GMAIL_APP_PASSWORD` (the 16 characters). Queries go to debojit.aic@gmail.com (`TEAM_INBOX`
+   in the function); set `INQUIRY_TO` only to send them somewhere else. Redeploy.
+3. For local testing, copy `.env.example` to `.env` with the same keys (`.env` is git-ignored).
+   Without keys, `npm run dev` prints each email in the terminal instead of sending it.
+
 ## Design system — "Neel"
 
 Indigo anchors the palette (the word comes from *indikon*, "from India"); lime is the single loud
@@ -41,6 +58,7 @@ rounded (22–36px), pills for tags and buttons, glass panels over photography.
 | — | `Lens` | Regional India isn’t a segment | Market figures from bcfworks.com, counting up |
 | 02 | `Services` | Three ways we make your brand local | The three pillars with BCF’s own numbers |
 | 03 | `Formats` | Nine formats. One native voice. | The content arsenal — each “Add to brief” |
+| — | `Folio` | Insight driven creative colab. Content first. | BCF’s portfolio deck rebuilt slide for slide: founder, clients, awards, press, ~90 films in six categories |
 | 04 | `Journey` | One brief. Thirteen originals. | **3D** flight: one campaign across 13 markets and languages |
 | 05 | `Regions` | Seven regions. Seven playbooks. | Stacking cards: languages, peak moments, “Plan for…” |
 | 06 | `Calendar` | Never miss a moment | Month tabs → moments → “Plan [month] campaigns” |
@@ -62,10 +80,16 @@ write to it; the brief builder and the sticky bar read it.
   idea-to-delivery, 10x output, the nine formats, the four principles, and the market figures
   (600M+, 12+, 4X, 90%) — which the page footnotes as “as published by BCF”. Those four market
   figures have no cited source on the live site either; source them before a public launch.
-- **No invented work.** No clients, case results or testimonials. BCF is a new company; the FAQ repeats
-  the live site’s transparency note and links to the work on bcfworks.com. Journey formats and hero
-  tags are planning illustrations, labelled in code as such.
-- The only conversion path is the existing inquiry form at `bcfworks.com/#inquiry` — no contact details.
+- **No invented work.** Clients, awards, press and films come only from BCF’s own portfolio deck,
+  “BC[f]W Folio 2026” (canva.link/bcfwfolio), in `src/data/folio.js`. The deck mixes BCF work with the
+  founder’s earlier work at ICE Media Lab (the Maddies citation credits ICE), and the FAQ says so.
+  No case results or testimonials. Journey formats and hero tags are planning illustrations.
+- **The Folio section keeps the deck’s own look** (poster colours, League Gothic caps, Sacramento
+  script, pink brush corner) rather than Neel. Films load as YouTube thumbnails and only become
+  players on click. The client wall is typeset names and the founder is a monogram until real logo
+  and photo files are supplied.
+- The only conversion path is the brief builder’s query form (emailed to the team); the
+  bcfworks.com form is only offered if sending fails. No phone numbers or addresses on the page.
 - **Photographs are hot-linked** from Wikimedia Commons, never downloaded, and credited in the footer.
 - Market → language (`STATE_LANG`) only uses languages on BCF’s list; other markets are `null`, not guessed.
 

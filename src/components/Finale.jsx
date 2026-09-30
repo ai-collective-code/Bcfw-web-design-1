@@ -54,7 +54,7 @@ export default function Finale() {
         <h2 className="display"><Words text="Your brand. *Bharat’s story.*" /></h2>
         <p>We don’t take briefs. We take stories that are waiting to be told. Tell us yours.</p>
         <div className="fin__actions">
-          <a ref={magnet} href={BRAND.inquiry} className="btn btn--lime" target="_blank" rel="noreferrer">
+          <a ref={magnet} href={BRAND.contact} className="btn btn--lime" onClick={onAnchor}>
             Start your campaign <Arrow />
           </a>
           <a href={BRAND.work} className="btn btn--ghost" target="_blank" rel="noreferrer">

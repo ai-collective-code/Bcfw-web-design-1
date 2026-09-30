@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { gsap, useGSAP, prefersReducedMotion } from '../lib/motion.js';
+import { gsap, useGSAP, prefersReducedMotion, onAnchor } from '../lib/motion.js';
 import { LENS, BRAND } from '../data/content.js';
 import { Words, Arrow } from './ui.jsx';
 import './Lens.css';
@@ -52,7 +52,7 @@ export default function Lens() {
               The next billion consumers don’t live in Bandra or Banjara Hills. They live in Bhagalpur, Bellary
               and Bokaro — and they can tell, instantly, when a brand is talking at them instead of to them.
             </p>
-            <a href={BRAND.inquiry} className="btn btn--lime" target="_blank" rel="noreferrer">
+            <a href={BRAND.contact} className="btn btn--lime" onClick={onAnchor}>
               Reach them in their language <Arrow />
             </a>
           </div>

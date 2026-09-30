@@ -83,7 +83,6 @@ export default function Regions() {
                     {r.photos.map((f) => (
                       <figure key={f.id}>
                         {near && <img src={wm(f.file, 960)} alt={`${f.festival}, ${f.state}`} loading="lazy" decoding="async" />}
-                        <figcaption>{f.festival}</figcaption>
                       </figure>
                     ))}
                   </div>

@@ -74,6 +74,26 @@
   background: rgba(198, 244, 50, 0.14); border: 1px solid rgba(198, 244, 50, 0.4); color: var(--lime); font-weight: 600;
 }
 
+.brief__toast {
+  position: fixed; left: 50%; bottom: 28px; z-index: 60; display: flex; align-items: center; gap: 12px;
+  max-width: min(460px, calc(100vw - 32px)); padding: 14px 16px; border-radius: 999px;
+  background: var(--ink); color: #fff; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+  transform: translate(-50%, 0); animation: brief-toast-in 0.35s var(--ease-out);
+}
+.brief__toast-icon {
+  display: grid; place-items: center; flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--lime); color: var(--ink); font-size: 13px; font-weight: 700;
+}
+.brief__toast span:not(.brief__toast-icon) { flex: 1; font-size: 14.5px; line-height: 1.35; }
+.brief__toast-close {
+  flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%; font-size: 18px; line-height: 1; color: rgba(255, 255, 255, 0.7);
+}
+.brief__toast-close:hover { color: #fff; }
+@keyframes brief-toast-in {
+  from { opacity: 0; transform: translate(-50%, 14px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
 /* Step 4: contact details */
 #inquiry { scroll-margin-top: 110px; }
 .brief__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }

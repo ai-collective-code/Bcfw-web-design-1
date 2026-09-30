@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SectionHead from './SectionHead.jsx';
 import { FESTIVALS, REGIONS, FORMATS, MONTHS, BRAND } from '../data/content.js';
 import { brief, useBrief } from '../lib/brief.js';
@@ -33,6 +33,13 @@ export default function Brief() {
   const [status, setStatus] = useState('idle');
   const [errors, setErrors] = useState({});
   const [preview, setPreview] = useState(false);
+  const [toast, setToast] = useState(false);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(false), 5000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const summary = useMemo(() => {
     const markets = FESTIVALS.filter((f) => regions.includes(f.region));
@@ -86,6 +93,7 @@ export default function Brief() {
       if (res.ok && out.ok) {
         setPreview(Boolean(out.preview));
         setStatus('sent');
+        setToast(true);
       } else if (res.status === 422 && out.errors) {
         setStatus('idle');
         showErrors(out.errors);
@@ -251,6 +259,14 @@ export default function Brief() {
           </aside>
         </div>
       </div>
+
+      {toast && (
+        <div className="brief__toast" role="status" aria-live="polite">
+          <span className="brief__toast-icon" aria-hidden="true">✓</span>
+          <span>Message sent — we’ll reply to {form.email}.</span>
+          <button type="button" className="brief__toast-close" onClick={() => setToast(false)} aria-label="Dismiss">×</button>
+        </div>
+      )}
     </section>
   );
 }

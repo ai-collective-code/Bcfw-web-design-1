@@ -1,0 +1,69 @@
+/* ------------------------------------------------------------------
+   Section washes — soft glows of the palette behind each section, so the
+   page moves through colour as it scrolls while cards stay white.
+   Each wash fades to transparent at its edges and blends into the next.
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #f4f3fb;
+  --wash-indigo: rgba(75, 63, 224, 0.18);
+  --wash-violet: rgba(155, 140, 255, 0.32);
+  --wash-lime: rgba(198, 244, 50, 0.38);
+  --wash-pink: rgba(232, 62, 140, 0.16);
+  --wash-sky: rgba(56, 189, 248, 0.24);
+  --wash-teal: rgba(15, 157, 138, 0.18);
+  --wash-marigold: rgba(253, 188, 27, 0.28);
+}
+
+.prob {
+  background:
+    radial-gradient(45% 55% at 0% 15%, var(--wash-lime), transparent 70%),
+    radial-gradient(40% 50% at 100% 85%, var(--wash-indigo), transparent 70%);
+}
+.svc {
+  background:
+    radial-gradient(50% 50% at 100% 10%, var(--wash-violet), transparent 70%),
+    radial-gradient(40% 50% at 0% 90%, var(--wash-sky), transparent 70%);
+}
+.fmt {
+  background:
+    radial-gradient(45% 55% at 0% 30%, var(--wash-pink), transparent 70%),
+    radial-gradient(40% 45% at 100% 80%, var(--wash-lime), transparent 70%);
+}
+.folio {
+  background:
+    radial-gradient(40% 18% at 100% 4%, var(--wash-marigold), transparent 70%),
+    radial-gradient(45% 16% at 0% 30%, var(--wash-pink), transparent 70%),
+    radial-gradient(45% 16% at 100% 58%, var(--wash-violet), transparent 70%),
+    radial-gradient(45% 16% at 0% 88%, var(--wash-marigold), transparent 70%);
+}
+.moods {
+  background:
+    radial-gradient(50% 30% at 0% 5%, var(--wash-indigo), transparent 70%),
+    radial-gradient(45% 30% at 100% 60%, var(--wash-pink), transparent 70%);
+}
+.radar {
+  background:
+    radial-gradient(45% 50% at 100% 15%, var(--wash-sky), transparent 70%),
+    radial-gradient(40% 45% at 0% 85%, var(--wash-lime), transparent 70%);
+}
+.brief {
+  background:
+    radial-gradient(45% 50% at 0% 20%, var(--wash-violet), transparent 70%),
+    radial-gradient(40% 45% at 100% 90%, var(--wash-lime), transparent 70%);
+}
+.proc {
+  background:
+    radial-gradient(45% 55% at 100% 20%, var(--wash-teal), transparent 70%),
+    radial-gradient(40% 45% at 0% 90%, var(--wash-indigo), transparent 70%);
+}
+.index {
+  background:
+    radial-gradient(45% 30% at 0% 8%, var(--wash-sky), transparent 70%),
+    radial-gradient(40% 30% at 100% 55%, var(--wash-teal), transparent 70%),
+    radial-gradient(45% 25% at 0% 95%, var(--wash-pink), transparent 70%);
+}
+.faq {
+  background:
+    radial-gradient(45% 50% at 100% 10%, var(--wash-lime), transparent 70%),
+    radial-gradient(45% 50% at 0% 90%, var(--wash-violet), transparent 70%);
+}

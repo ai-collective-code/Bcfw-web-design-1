@@ -53,6 +53,9 @@ export default function Regions() {
             return (
               <article className="mood" key={r.key} style={{ '--accent': r.accent, '--i': i }} aria-label={`${r.key} India playbook`}>
                 <div className="mood__inner">
+                  <figure className="mood__hero">
+                    {near && <img src={wm(r.photos[0].file, 1600)} alt={`${r.photos[0].festival}, ${r.photos[0].state}`} loading="lazy" decoding="async" />}
+                  </figure>
                   <div className="mood__copy">
                     <div className="mood__top">
                       <span className="mono">Playbook {pad(i + 1)} / {pad(REGIONS.length)}</span>
@@ -74,17 +77,19 @@ export default function Regions() {
                         {r.entries.length > 5 && <li className="mood__more">+{r.entries.length - 5} more</li>}
                       </ul>
                     </div>
-                    <button className={`btn ${added ? 'btn--lime' : 'btn--ink'} mood__cta`} onClick={() => plan(r.key)}>
+                    <button className={`btn ${added ? 'btn--ink' : 'btn--lime'} mood__cta`} onClick={() => plan(r.key)}>
                       {added ? `${r.key} is in your brief` : `Plan for ${NAME[r.key]}`}
                       <span className="btn__arrow" aria-hidden="true"><i>{added ? '✓' : '→'}</i><i>{added ? '✓' : '→'}</i></span>
                     </button>
                   </div>
-                  <div className={`mood__photos mood__photos--${r.photos.length}`}>
-                    {r.photos.map((f) => (
-                      <figure key={f.id}>
-                        {near && <img src={wm(f.file, 960)} alt={`${f.festival}, ${f.state}`} loading="lazy" decoding="async" />}
+                  <div className="mood__prints">
+                    {r.photos.slice(1).map((f) => (
+                      <figure key={f.id} className="mood__print">
+                        {near && <img src={wm(f.file, 640)} alt={`${f.festival}, ${f.state}`} loading="lazy" decoding="async" />}
+                        <figcaption><b>{f.festival}</b><span>{f.state}</span></figcaption>
                       </figure>
                     ))}
+                    <p className="mood__caption"><b>{r.photos[0].festival}</b><span>{r.photos[0].state}</span></p>
                   </div>
                 </div>
               </article>

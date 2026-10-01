@@ -7,7 +7,7 @@ import { Arrow } from './ui.jsx';
 import './Brief.css';
 
 const ACCENT = Object.fromEntries(REGIONS.map((r) => [r.key, r.accent]));
-const MAX_MOMENTS = 8;
+const MAX_MOMENTS = 6;
 const EMAIL_RE = /^[^\s@<>()]+@[^\s@<>()]+\.[^\s@<>()]{2,}$/;
 const EMPTY = { name: '', email: '', company: '', phone: '', message: '', website: '' };
 
@@ -140,7 +140,7 @@ export default function Brief() {
 
             <fieldset className="brief__step">
               <legend><span className="brief__num">2</span> When is the moment?</legend>
-              <div className="brief__chips">
+              <div className="brief__chips brief__chips--months">
                 <button type="button" className={`chip ${month < 0 ? 'is-on' : ''}`} onClick={() => brief.setMonth(-1)} aria-pressed={month < 0}>Always-on</button>
                 {MONTHS.map((m, i) => (
                   <button type="button" key={m} className={`chip ${month === i ? 'is-on' : ''}`} onClick={() => brief.setMonth(i)} aria-pressed={month === i}>
@@ -183,7 +183,7 @@ export default function Brief() {
                     <Field id="email" label="Work email *" type="email" value={form.email} onChange={set('email')} error={errors.email} autoComplete="email" required maxLength={200} />
                     <Field id="company" label="Company / brand" value={form.company} onChange={set('company')} autoComplete="organization" maxLength={160} />
                     <Field id="phone" label="Phone" type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel" maxLength={40} />
-                    <Field id="message" label="Tell us about the campaign" textarea rows={4} value={form.message} onChange={set('message')} maxLength={5000}
+                    <Field id="message" label="Tell us about the campaign" textarea rows={2} value={form.message} onChange={set('message')} maxLength={5000}
                       placeholder="Launch, budget range, timelines — anything that helps." />
                     {/* Honeypot: invisible to people, irresistible to form bots. */}
                     <label className="brief__trap" aria-hidden="true">

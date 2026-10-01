@@ -6,8 +6,39 @@ import {
 } from '../data/folio.js';
 import { Arrow } from './ui.jsx';
 import './Folio.css';
+import founderPhoto from '../assets/debojit.png';
+
+// Client logos, cut from the deck's logo slide; keyed by file name.
+const LOGOS = Object.fromEntries(
+  Object.entries(import.meta.glob('../assets/clients/*.png', { eager: true, import: 'default' }))
+    .map(([path, url]) => [path.split('/').pop().replace('.png', ''), url]),
+);
 
 const SHOWN = 8;
+
+// A small laurel wreath: a branch arc on each side with an outer and inner row of leaves.
+const at = (r, deg) => [24 + r * Math.cos((deg * Math.PI) / 180), 24 + r * Math.sin((deg * Math.PI) / 180)];
+const LEAVES = [0, 1, 2, 3, 4, 5].flatMap((i) => {
+  const deg = 112 + i * 19;
+  const outer = { c: at(19.5, deg), rx: 1.9, ry: 4.2, rot: deg - 30 };
+  const inner = { c: at(14.5, deg + 6.9), rx: 1.7, ry: 3.6, rot: deg + 30 };
+  return i < 5 ? [outer, inner] : [outer];
+});
+const [B0, B1] = [at(17, 98), at(17, 222)];
+function Laurel() {
+  return (
+    <svg className="laurel" viewBox="0 0 48 48" aria-hidden="true">
+      {[false, true].map((flip) => (
+        <g key={flip} transform={flip ? 'translate(48 0) scale(-1 1)' : undefined}>
+          <path d={`M${B0[0]} ${B0[1]} A17 17 0 0 1 ${B1[0]} ${B1[1]}`} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+          {LEAVES.map(({ c: [x, y], rx, ry, rot }) => (
+            <ellipse key={`${x}${y}`} cx={x} cy={y} rx={rx} ry={ry} fill="currentColor" transform={`rotate(${rot} ${x} ${y})`} />
+          ))}
+        </g>
+      ))}
+    </svg>
+  );
+}
 
 /** The deck's pink brush corner. */
 const Mark = ({ at = 'top' }) => <i className={`fmark fmark--${at}`} aria-hidden="true" />;
@@ -125,6 +156,10 @@ export default function Folio() {
         <p className="tag"><b>The work</b> BC[f]W Folio 2026</p>
 
         <div className="fslide fcover" data-reveal>
+          <div className="fcover__bar">
+            <span>BC[f]W Folio</span>
+            <span>{FOLIO_COVER.cities.join(' · ')}</span>
+          </div>
           <h2 id="folio-title" className="fcover__title">
             {FOLIO_COVER.lines.map((line, i) => (
               <span className="fcover__line" key={i}>
@@ -132,11 +167,14 @@ export default function Folio() {
               </span>
             ))}
           </h2>
-          <p className="fcover__reg">{FOLIO_COVER.registered.map((l) => <span key={l}>{l}</span>)}</p>
+          <div className="fcover__foot">
+            <p className="fcover__reg">Registered under <b>{FOLIO_COVER.company}</b></p>
+          </div>
+          <div className="fcover__sun" aria-hidden="true"><span>{FOLIO_COVER.year}</span></div>
         </div>
 
         <div className="fslide ffounder" data-reveal>
-          <div className="ffounder__photo" aria-hidden="true"><span>D</span></div>
+          <div className="ffounder__photo"><img src={founderPhoto} alt={`${FOUNDER.name}, ${FOUNDER.role} of BC[f]W`} width="230" height="230" loading="lazy" /></div>
           <div className="ffounder__text">
             <h3>{FOUNDER.role}. {FOUNDER.name}</h3>
             {FOUNDER.paras.map((p) => <p key={p}>{p}</p>)}
@@ -146,34 +184,58 @@ export default function Folio() {
         <Divider k="portfolio" />
         <div className="fslide flogos" data-reveal>
           <ul className="flogos__wall" aria-label="Clients">
-            {CLIENTS.map((c) => <li key={c}>{c}</li>)}
+            {CLIENTS.map(([name, logo]) => (
+              <li key={name} title={name}>
+                {LOGOS[logo] ? <img src={LOGOS[logo]} alt={name} loading="lazy" /> : <span>{name}</span>}
+              </li>
+            ))}
           </ul>
         </div>
 
         <Divider k="awards" />
         <div className="fslide fawards" data-reveal>
-          <ul className="fawards__list">
-            {AWARDS.map((a) => <li key={a}>{a}</li>)}
-          </ul>
-          <aside className="fawards__cite">
-            <span className="fawards__medal">{CITATION.medal}</span>
-            <p className="mono">{CITATION.award}</p>
-            <h4>{CITATION.campaign}</h4>
-            <p>{CITATION.brand} · {CITATION.category}</p>
-            <p className="mono fawards__agency">Agency: {CITATION.agency}</p>
-          </aside>
+          <div className="fawards__top">
+            <div className="fawards__head">
+              <p className="mono">Recognition</p>
+              <h3><b>{AWARDS.length}</b> award platforms have honoured our team’s work</h3>
+            </div>
+            <aside className="fawards__cite">
+              <span className="fawards__medal"><Laurel />{CITATION.medal}</span>
+              <div>
+                <p className="mono">{CITATION.award}</p>
+                <h4>{CITATION.campaign}</h4>
+                <p>{CITATION.brand} · {CITATION.category}</p>
+                <p className="mono fawards__agency">Agency: {CITATION.agency}</p>
+              </div>
+            </aside>
+          </div>
+          <ol className="fawards__list">
+            {AWARDS.map((a, i) => (
+              <li key={a}>
+                <Laurel />
+                <span className="mono">{String(i + 1).padStart(2, '0')}</span>
+                <b>{a}</b>
+              </li>
+            ))}
+          </ol>
           <Mark at="bottom" />
         </div>
 
         <div className="fslide fpress" data-reveal>
-          <p className="mono fpress__label">In the press</p>
-          <ul>
+          <div className="fpress__head">
+            <div>
+              <p className="mono">In the press</p>
+              <h3>The work, as the trade press covered it</h3>
+            </div>
+            <p className="fpress__outlets">{[...new Set(PRESS.map((p) => p.outlet))].join(' · ')}</p>
+          </div>
+          <ul className="fpress__grid">
             {PRESS.map((p) => (
               <li key={p.url}>
                 <a href={p.url} target="_blank" rel="noreferrer">
                   <span className="mono">{p.outlet}</span>
                   <b>{p.head}</b>
-                  <span className="fwork__go" aria-hidden="true">↗</span>
+                  <span className="fpress__read">Read article <i aria-hidden="true">↗</i></span>
                 </a>
               </li>
             ))}
@@ -188,8 +250,26 @@ export default function Folio() {
         ))}
 
         <div className="fslide fcoffee" data-reveal>
-          <p className="fcoffee__art"><i aria-hidden="true" /><span>Coffee?</span></p>
-          <a href={BRAND.contact} className="btn btn--ink" onClick={onAnchor}>Let’s talk <Arrow /></a>
+          <div className="fcoffee__copy">
+            <p className="fcoffee__script">Coffee?</p>
+            <h3>Let’s brew your next campaign together.</h3>
+            <p className="fcoffee__lede">Tell us about your brand and the audience you want to reach. We’ll come back with ideas, in their language.</p>
+            <a href={BRAND.contact} className="btn btn--lime" onClick={onAnchor}>Let’s talk <Arrow /></a>
+          </div>
+          <svg className="fcoffee__cup" viewBox="0 0 220 220" aria-hidden="true">
+            <g className="fcoffee__steam" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round">
+              <path d="M78 76 c-12 -14 12 -22 0 -38" />
+              <path d="M106 70 c-12 -14 12 -22 0 -40" />
+              <path d="M134 76 c-12 -14 12 -22 0 -38" />
+            </g>
+            <ellipse cx="106" cy="196" rx="86" ry="12" fill="#000" opacity="0.25" />
+            <ellipse cx="106" cy="188" rx="78" ry="12" fill="#f6e7cf" />
+            <path d="M164 112 h10 a24 24 0 0 1 0 48 h-14" fill="none" stroke="#ff47b1" strokeWidth="11" />
+            <path d="M40 96 h132 l-10 72 a20 20 0 0 1 -20 18 h-72 a20 20 0 0 1 -20 -18 z" fill="#ff47b1" />
+            <path d="M40 96 h132 l-2 14 h-128 z" fill="#e3197b" />
+            <ellipse cx="106" cy="96" rx="66" ry="10" fill="#6b3a1f" />
+            <text x="106" y="152" textAnchor="middle" className="fcoffee__mark">BC[f]W</text>
+          </svg>
           <p className="fcoffee__note">**Bharat Content Fireworks is a part of AI Collective Private Limited.</p>
         </div>
       </div>

@@ -63,22 +63,35 @@ export default function Finale() {
         </div>
       </div>
 
-      <div className="shell fin__foot">
-        <div className="fin__brand">
-          <span className="fin__logo">BCF<i /></span>
-          <span>{BRAND.full}</span>
-          <em>{BRAND.tagline}</em>
+      <div className="fin__panel on-night">
+        <div className="fin__foot">
+          <div className="fin__brand">
+            <span className="fin__logo">BCF<i /></span>
+            <span>{BRAND.full}</span>
+            <em>{BRAND.tagline}</em>
+            <a href={BRAND.contact} className="fin__mail" onClick={onAnchor}>Start a brief <span aria-hidden="true">→</span></a>
+          </div>
+          <nav className="fin__nav" aria-label="Footer">
+            <span className="mono">Explore</span>
+            <a href="#problem" onClick={onAnchor}>Why regional</a>
+            <a href="#services" onClick={onAnchor}>What we do</a>
+            <a href="#formats" onClick={onAnchor}>Formats</a>
+            <a href="#regions" onClick={onAnchor}>Market playbooks</a>
+          </nav>
+          <nav className="fin__nav" aria-label="Plan">
+            <span className="mono">Plan</span>
+            <a href="#calendar" onClick={onAnchor}>Campaign calendar</a>
+            <a href="#atlas" onClick={onAnchor}>Market index</a>
+            <a href="#brief" onClick={onAnchor}>Brief builder</a>
+            <a href="#faq" onClick={onAnchor}>FAQ</a>
+          </nav>
+          <div className="fin__where">
+            <span className="mono">Studios</span>
+            <ul>{['Noida', 'Kolkata', 'Mumbai'].map((c) => <li key={c}>{c}</li>)}</ul>
+            <a href={BRAND.work} target="_blank" rel="noreferrer">See the work ↗</a>
+          </div>
         </div>
-        <nav className="fin__nav" aria-label="Footer">
-          <span className="mono">Explore</span>
-          <a href="#problem" onClick={onAnchor}>Why regional</a>
-          <a href="#services" onClick={onAnchor}>What we do</a>
-          <a href="#formats" onClick={onAnchor}>Formats</a>
-          <a href="#regions" onClick={onAnchor}>Market playbooks</a>
-          <a href="#calendar" onClick={onAnchor}>Campaign calendar</a>
-          <a href="#brief" onClick={onAnchor}>Brief builder</a>
-          <a href="#faq" onClick={onAnchor}>FAQ</a>
-        </nav>
+
         <details className="fin__credits">
           <summary><span className="mono">Photo credits</span> <sup>{TOTAL}</sup></summary>
           <p>
@@ -99,14 +112,14 @@ export default function Finale() {
             ))}
           </ul>
         </details>
-      </div>
 
-      <div className="fin__giant" aria-hidden="true">win india<span>.</span></div>
+        <div className="fin__giant" aria-hidden="true">win india<span>.</span></div>
 
-      <div className="shell fin__legal mono">
-        <span>© 2026 {BRAND.name} — {BRAND.full}</span>
-        <span>Festival dates are indicative; lunar calendars move them every year.</span>
-        <a href="#top" onClick={onAnchor}>Back to top ↑</a>
+        <div className="fin__legal mono">
+          <span>© 2026 {BRAND.name} — {BRAND.full}</span>
+          <span>Festival dates are indicative; lunar calendars move them every year.</span>
+          <a href="#top" onClick={onAnchor}>Back to top ↑</a>
+        </div>
       </div>
     </footer>
   );

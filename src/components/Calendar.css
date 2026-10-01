@@ -5,59 +5,87 @@
   background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-lg);
 }
 
-/* position: relative contains the tabs' absolutely-positioned .sr-only labels —
+/* Months as a timeline: each bar is as tall as that month is busy.
+   position: relative contains the tabs' absolutely-positioned .sr-only labels —
    without it they escape the horizontal scroller and widen the whole page on phones. */
 .radar__tabs {
-  position: relative; display: flex; gap: 4px; padding: 6px; border-radius: 999px; background: var(--bg);
+  position: relative; display: grid; grid-template-columns: repeat(12, minmax(52px, 1fr)); gap: 6px;
+  padding: 14px 12px 10px; border-radius: 24px; background: var(--bg);
   overflow-x: auto; scrollbar-width: none;
 }
 .radar__tabs::-webkit-scrollbar { display: none; }
 .radar__tab {
-  flex: 1 0 auto; display: inline-flex; align-items: flex-start; justify-content: center; gap: 4px;
-  padding: 12px 16px; border-radius: 999px;
-  font-family: var(--f-display); font-weight: 600; font-size: 17px; letter-spacing: -0.02em; color: var(--ink-2);
-  transition: background 0.35s, color 0.35s, box-shadow 0.35s;
+  display: grid; grid-template-rows: auto 72px auto; justify-items: center; align-items: end; gap: 6px;
+  padding: 8px 4px; border-radius: 16px; color: var(--ink-2);
+  transition: background 0.35s, color 0.35s;
 }
-.radar__tab sup {
-  font-family: var(--f-mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0;
-  padding: 1px 6px; border-radius: 999px; background: var(--indigo-soft); color: var(--indigo);
+.radar__count { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+.radar__bar {
+  width: min(100%, 26px); height: calc(10px + var(--h) * 62px); border-radius: 8px;
+  background: color-mix(in srgb, var(--indigo) 22%, transparent); transition: background 0.35s, height 0.5s var(--ease-out);
 }
+.radar__name { font-family: var(--f-display); font-weight: 600; font-size: 15px; letter-spacing: -0.02em; }
 .radar__tab:hover { background: var(--surface); color: var(--ink); }
-.radar__tab.is-on { background: var(--ink); color: #fff; box-shadow: 0 8px 20px -8px rgba(11, 11, 31, 0.5); }
-.radar__tab.is-on sup { background: var(--lime); color: var(--ink); }
+.radar__tab:hover .radar__bar { background: color-mix(in srgb, var(--indigo) 45%, transparent); }
+.radar__tab.is-on { background: var(--ink); color: #fff; }
+.radar__tab.is-on .radar__bar { background: var(--lime); }
+.radar__tab.is-on .radar__count { color: var(--lime); }
 
-.radar__head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding: 34px 8px 24px; }
+.radar__head { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 16px 32px; padding: 34px 8px 26px; }
+.radar__title .mono { color: var(--ink-3); }
 .radar__head h3 { font-size: clamp(48px, 6vw, 92px); }
-.radar__head .mono { color: var(--ink-3); }
+.radar__stats { display: flex; gap: 28px; margin: 0 0 10px; }
+.radar__stats div { padding-left: 14px; border-left: 2px solid var(--lime); }
+.radar__stats dt { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.radar__stats dd { margin: 2px 0 0; font-family: var(--f-display); font-weight: 700; font-size: 32px; line-height: 1; letter-spacing: -0.03em; }
 
+/* Festivals as photo posters. */
 .radar__cards {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px;
   perspective: 1400px;
 }
 .radar__card {
-  display: grid; gap: 8px; align-content: start; padding: 8px 8px 16px; border-radius: 24px; text-align: left;
-  background: var(--bg); transition: background 0.35s, transform 0.5s var(--ease-out), box-shadow 0.5s;
+  position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
+  aspect-ratio: 4 / 5; padding: 16px; border-radius: 24px; text-align: left; color: #fff;
+  background: var(--surface-2); transition: transform 0.5s var(--ease-out), box-shadow 0.5s;
 }
-.radar__card:hover { background: var(--surface); box-shadow: var(--shadow); transform: translateY(-4px); }
-.radar__img { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 18px; background: var(--surface-2); margin-bottom: 6px; }
-.radar__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out); }
-.radar__card:hover .radar__img img { transform: scale(1.06); }
-.radar__card strong { padding: 0 8px; font-family: var(--f-display); font-weight: 700; font-size: 22px; letter-spacing: -0.035em; line-height: 1.05; }
-.radar__meta { padding: 0 8px; font-size: 14.5px; color: var(--ink-2); }
-.radar__meta .mono { font-size: 12px; color: var(--ink-3); }
+.radar__card > img {
+  position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
+}
+.radar__card::after {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(0deg, rgba(10, 10, 26, 0.92) 0%, rgba(10, 10, 26, 0.55) 38%, transparent 65%);
+}
+.radar__card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.radar__card:hover > img { transform: scale(1.07); }
+
+.radar__region {
+  position: absolute; top: 14px; left: 14px; padding: 5px 11px; border-radius: 999px;
+  background: var(--accent); color: #fff; font-size: 12px; font-weight: 600;
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.5);
+}
+.radar__body { display: grid; gap: 4px; }
+.radar__when { justify-self: start; font-size: 11.5px; color: var(--lime); text-transform: uppercase; letter-spacing: 0.06em; }
+.radar__card strong { font-family: var(--f-display); font-weight: 700; font-size: 23px; letter-spacing: -0.035em; line-height: 1.05; }
+.radar__meta { font-size: 14px; color: rgba(255, 255, 255, 0.75); }
+.radar__lang {
+  justify-self: start; margin-top: 8px; padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 500;
+  background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22); backdrop-filter: blur(8px);
+  transition: background 0.3s, color 0.3s;
+}
+.radar__card:hover .radar__lang { background: var(--lime); border-color: transparent; color: var(--ink); }
 
 .radar__note { margin: 26px 8px 4px; max-width: 80ch; color: var(--ink-3); line-height: 1.6; }
 
+.radar__plan { height: 48px; font-size: 15px; margin: 0 0 6px auto; }
+.radar__plan .btn__arrow { width: 34px; height: 34px; }
+
 @media (max-width: 480px) {
   .radar__cards { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .radar__card strong { font-size: 18px; }
+  .radar__card { padding: 12px; border-radius: 18px; }
+  .radar__card strong { font-size: 17px; }
+  .radar__lang { display: none; }
   .radar__panel { border-radius: 28px; }
-}
-
-.radar__plan { height: 48px; font-size: 15px; margin-left: auto; }
-.radar__plan .btn__arrow { width: 34px; height: 34px; }
-.radar__head .mono { margin-right: 8px; }
-.radar__lang {
-  justify-self: start; margin: 4px 8px 0; padding: 4px 10px; border-radius: 999px;
-  background: var(--indigo-soft); color: var(--indigo); font-size: 12.5px; font-weight: 500;
+  .radar__plan { margin-left: 0; }
 }

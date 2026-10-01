@@ -3,24 +3,27 @@
 .brief__grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 14px; align-items: start; }
 
 .brief__steps {
-  display: grid; gap: 8px; padding: clamp(18px, 2.2vw, 30px); border-radius: 36px;
+  display: grid; gap: 0; padding: clamp(14px, 1.6vw, 22px) clamp(16px, 1.8vw, 26px); border-radius: 36px;
   background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
 }
-.brief__step { margin: 0; padding: 18px 8px 22px; border: 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.brief__step { margin: 0; padding: 12px 4px 14px; border: 0; border-bottom: 1px solid var(--line); min-width: 0; }
 .brief__step:last-child { border-bottom: 0; }
 .brief__step legend {
-  display: flex; align-items: center; gap: 12px; padding: 0; margin-bottom: 16px;
-  font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 2vw, 28px); letter-spacing: -0.035em;
+  display: flex; align-items: center; gap: 10px; padding: 0; margin-bottom: 10px;
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: -0.03em;
 }
 .brief__num {
-  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
-  background: var(--ink); color: var(--lime); font-family: var(--f-mono); font-size: 14px; font-weight: 500; letter-spacing: 0;
+  display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--ink); color: var(--lime); font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: 0;
 }
-.brief__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.brief__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* Months as one segmented strip. */
+.brief__chips--months { display: grid; grid-template-columns: auto repeat(12, minmax(0, 1fr)); gap: 4px; }
+.brief__chips--months .chip { justify-content: center; padding: 0 6px; }
 
 .chip {
-  display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 16px; border-radius: 999px;
-  background: var(--bg); border: 1px solid var(--line); font-size: 14.5px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--line); font-size: 13.5px; font-weight: 500;
   transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.3s var(--ease-out);
 }
 .chip:hover { border-color: var(--line-2); transform: translateY(-1px); }
@@ -34,7 +37,7 @@
 
 /* Summary */
 .brief__card {
-  position: sticky; top: 100px; display: grid; gap: 22px; padding: clamp(22px, 2.4vw, 32px); border-radius: 36px;
+  position: sticky; top: 100px; display: grid; gap: 16px; padding: clamp(18px, 2vw, 26px); border-radius: 30px;
   background:
     radial-gradient(60% 50% at 100% 0%, rgba(198, 244, 50, 0.16), transparent 70%),
     radial-gradient(60% 60% at 0% 100%, rgba(108, 97, 255, 0.45), transparent 70%),
@@ -46,20 +49,20 @@
 .brief__reset:hover { color: #fff; }
 
 .brief__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
-.brief__stats div { display: flex; flex-direction: column-reverse; gap: 4px; padding: 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--night-line); }
-.brief__stats dd { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(40px, 4vw, 60px); letter-spacing: -0.05em; line-height: 0.9; color: #fff; font-variant-numeric: tabular-nums; }
+.brief__stats div { display: flex; flex-direction: column-reverse; gap: 4px; padding: 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--night-line); }
+.brief__stats dd { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(30px, 2.8vw, 42px); letter-spacing: -0.05em; line-height: 0.9; color: #fff; font-variant-numeric: tabular-nums; }
 .brief__stats dt { font-family: var(--f-mono); font-size: 11.5px; color: var(--on-night-2); }
 
 .brief__empty { margin: 0; padding: 24px; border-radius: 20px; border: 1px dashed var(--night-line); color: var(--on-night-2); text-align: center; }
 .brief__empty b { color: var(--lime); font-weight: 600; }
 
-.brief__lists { display: grid; gap: 16px; }
-.brief__lists .mono { display: block; margin-bottom: 8px; color: var(--on-night-2); }
+.brief__lists { display: grid; gap: 12px; }
+.brief__lists .mono { display: block; margin-bottom: 6px; color: var(--on-night-2); }
 .brief__tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.brief__tags li { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); font-size: 13.5px; }
+.brief__tags li { display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); font-size: 12.5px; }
 .brief__tags li i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .brief__tags--lime li { background: var(--lime); color: var(--ink); font-weight: 600; }
-.brief__moments { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; font-size: 14px; color: var(--on-night-2); }
+.brief__moments { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 14px; font-size: 13px; color: var(--on-night-2); }
 .brief__moments b { color: #fff; font-weight: 600; }
 .brief__more { color: var(--lime); }
 .brief__none, .brief__formats { margin: 0; font-size: 15px; color: #fff; }
@@ -96,23 +99,24 @@
 
 /* Step 4: contact details */
 #inquiry { scroll-margin-top: 110px; }
-.brief__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.field { display: grid; gap: 7px; min-width: 0; }
+.brief__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.field { display: grid; gap: 5px; min-width: 0; }
 .field--wide { grid-column: 1 / -1; }
-.field > span { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink-2); }
+.field > span { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-2); }
 .field input,
 .field textarea {
-  width: 100%; padding: 13px 16px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg);
-  font: inherit; font-size: 16px; color: var(--ink); transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  width: 100%; padding: 9px 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg);
+  font: inherit; font-size: 15px; color: var(--ink); transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
 }
-.field textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+.field textarea { resize: vertical; min-height: 62px; line-height: 1.45; }
 .field input:focus,
 .field textarea:focus { outline: none; border-color: var(--indigo); background: var(--surface); box-shadow: 0 0 0 4px var(--indigo-soft); }
 .field.has-error input,
 .field.has-error textarea { border-color: var(--pink); background: #fff5f9; }
 .field em { font-style: normal; font-size: 13.5px; color: var(--pink); }
 .brief__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.brief__submit { margin-top: 18px; }
+.brief__submit { margin-top: 12px; height: 46px; font-size: 15px; }
+.brief__submit .btn__arrow { width: 32px; height: 32px; }
 .brief__error { margin: 14px 0 0; padding: 12px 16px; border-radius: 14px; background: #fff5f9; color: #b0165f; font-size: 15px; }
 .brief__error a { text-decoration: underline; text-underline-offset: 3px; }
 .brief__done {
@@ -131,6 +135,8 @@
 }
 @media (max-width: 600px) {
   .brief__fields { grid-template-columns: 1fr; }
+  .brief__chips--months { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .brief__chips--months .chip:first-child { grid-column: 1 / -1; }
 }
 @media (max-width: 480px) {
   .brief__moments { grid-template-columns: 1fr; }

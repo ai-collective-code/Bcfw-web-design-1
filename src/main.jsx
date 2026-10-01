@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import 'lenis/dist/lenis.css';
 import './styles/base.css';
+import './styles/tints.css';
 import App from './App.jsx';
 
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';

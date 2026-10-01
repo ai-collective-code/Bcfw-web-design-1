@@ -5,11 +5,14 @@
  */
 
 export const FOLIO_COVER = {
+  year: '2026',
   lines: [
-    [['Insight driven ', 'grey'], ['creative colab', 'navy']],
-    [['Content ', 'ink'], ['first', 'grey']],
+    [['Insight driven', 'grey']],
+    [['creative colab', 'navy']],
+    [['Content ', 'ink'], ['first', 'brush']],
   ],
-  registered: ['Registered under', 'AI Collective Private Limited.', 'Noida. Kolkata. Mumbai.'],
+  company: 'AI Collective Private Limited',
+  cities: ['Noida', 'Kolkata', 'Mumbai'],
 };
 
 export const FOUNDER = {
@@ -34,14 +37,19 @@ export const DIVIDERS = {
   technology: { word: 'Technology', script: 'takniki', bg: '#E91F7B', fg: '#FDBC1B', sc: '#FFFFFF', size: 30, style: 'flat' },
 };
 
-// Slide 4, in the deck's order.
+// Slide 4, in the deck's order: [name, logo file in src/assets/clients/].
 export const CLIENTS = [
-  'P.C. Chandra Jewellers', 'DTC', 'Lenskart', 'Nykaa', 'Fem', 'Cremica', 'Dabur',
-  'Swiggy', 'Dabur Red', 'Dabur Honey', 'ENO', 'Sunfeast YiPPee!', 'Dabur Chyawanprash', 'Dabur Lal Tail',
-  'MYK Laticrete', 'India Gate', 'Mom’s Magic', 'Aashirvaad', 'ITC Limited', 'Aditya Birla', 'Baidyanath Vansaar',
-  'Odomos', 'Kurl-on', 'SBI General', 'CEAT', 'Nuvoco', 'Sunfeast', 'Mrs. Bector’s',
-  'Sunrise Pure', 'gaana.com', 'Zetwerk', 'Srijan', 'Réal Fruit Power', 'Springfit', 'Bounce',
-  'Hajmola', 'Berger', 'Baidyanath', 'Ola', 'Dozee', 'Pudin Hara',
+  ['P.C. Chandra Jewellers', 'pc-chandra'], ['DTC', 'dtc'], ['Lenskart', 'lenskart'], ['Nykaa', 'nykaa'],
+  ['Fem', 'fem'], ['Cremica', 'cremica'], ['Dabur', 'dabur'], ['Swiggy', 'swiggy'], ['Dabur Red', 'dabur-red'],
+  ['Dabur Honey', 'dabur-honey'], ['ENO', 'eno'], ['Sunfeast YiPPee!', 'sunfeast-yippee'],
+  ['Dabur Chyawanprash', 'dabur-chyawanprash'], ['Dabur Lal Tail', 'dabur-lal-tail'], ['MYK Laticrete', 'myk-laticrete'],
+  ['India Gate', 'india-gate'], ['Mom’s Magic', 'moms-magic'], ['Aashirvaad', 'aashirvaad'], ['ITC Limited', 'itc'],
+  ['Aditya Birla', 'aditya-birla'], ['Baidyanath Vansaar', 'baidyanath-vansaar'], ['Odomos', 'odomos'],
+  ['Kurl-on', 'kurlon'], ['SBI General', 'sbi-general'], ['CEAT', 'ceat'], ['Nuvoco', 'nuvoco'], ['Sunfeast', 'sunfeast'],
+  ['Mrs. Bector’s', 'mrs-bectors'], ['Sunrise Pure', 'sunrise-pure'], ['gaana.com', 'gaana'], ['Zetwerk', 'zetwerk'],
+  ['Srijan', 'srijan'], ['Réal Fruit Power', 'real-fruit-power'], ['Springfit', 'springfit'], ['Bounce', 'bounce'],
+  ['Hajmola', 'hajmola'], ['Berger', 'berger'], ['Baidyanath', 'baidyanath'], ['Ola', 'ola'], ['Dozee', 'dozee'],
+  ['Pudin Hara', 'pudin-hara'],
 ];
 
 export const AWARDS = [

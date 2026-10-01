@@ -17,52 +17,29 @@ const matches = (q, f) => {
   return [f.state, f.festival, f.region, ...f.also].some((v) => v.toLowerCase().includes(s));
 };
 
-/** Card with a gentle 3D tilt that follows the pointer; the photo sits deeper than the text. */
-function TiltCard({ f, i, onOpen }) {
-  const el = useRef(null);
-  const move = (e) => {
-    if (e.pointerType !== 'mouse') return;
-    const r = el.current.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    const s = el.current.style;
-    s.setProperty('--rx', `${(-y * 10).toFixed(2)}deg`);
-    s.setProperty('--ry', `${(x * 12).toFixed(2)}deg`);
-    s.setProperty('--gx', `${((x + 0.5) * 100).toFixed(1)}%`);
-    s.setProperty('--gy', `${((y + 0.5) * 100).toFixed(1)}%`);
-  };
-  const leave = () => {
-    const s = el.current.style;
-    s.setProperty('--rx', '0deg');
-    s.setProperty('--ry', '0deg');
-  };
-
+/** One market as a directory row: thumbnail, state and moment, language and dates. */
+function Row({ f, i, onOpen }) {
+  const lang = langOf(f.state);
   return (
     <button
-      ref={el}
-      className="card"
+      className="row"
       style={{ '--i': Math.min(i, 14), '--accent': ACCENT[f.region] }}
-      onPointerMove={move}
-      onPointerLeave={leave}
       onClick={(e) => onOpen(f.id, e.currentTarget)}
       data-cursor="Open"
       aria-label={`${f.festival}, ${f.state}. ${f.when}. Open details`}
     >
-      <span className="card__in">
-        <span className="card__img">
-          <img src={wm(f.file, 500)} alt="" loading="lazy" decoding="async" />
-          <span className="card__glare" />
-          <span className="card__num">{pad(f.id)}</span>
+      <span className="row__img"><img src={wm(f.file, 240)} alt="" loading="lazy" decoding="async" /></span>
+      <span className="row__main">
+        <span className="row__state">
+          <span className="mono">{pad(f.id)}</span>
+          {f.state}
+          {f.kind === 'UT' && <em>UT</em>}
         </span>
-        <span className="card__txt">
-          <span className="card__row">
-            <small>{f.state}</small>
-            <em>{f.kind === 'UT' ? 'UT' : 'State'}</em>
-          </span>
-          <strong>{f.festival}</strong>
-          <span className="card__when mono">{f.when}{langOf(f.state) && <> · <b>{langOf(f.state)}</b></>}</span>
-        </span>
+        <strong>{f.festival}</strong>
+        <span className="row__when mono">{f.when}</span>
       </span>
+      {lang && <span className="row__lang">{lang}</span>}
+      <span className="row__go" aria-hidden="true">→</span>
     </button>
   );
 }
@@ -214,19 +191,18 @@ export default function Atlas() {
               </button>
             ))}
           </div>
-          <label className="index__search">
-            <span className="sr-only">Search states and festivals</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-            <input type="search" placeholder="Search a market or moment" value={query} onChange={(e) => setQuery(e.target.value)} />
-          </label>
+          <div className="index__find">
+            <label className="index__search">
+              <span className="sr-only">Search states and festivals</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+              <input type="search" placeholder="Search a market or moment" value={query} onChange={(e) => setQuery(e.target.value)} />
+            </label>
+            <p className="index__status mono" aria-live="polite">{list.length} / {FESTIVALS.length}</p>
+          </div>
         </div>
 
-        <p className="index__status mono" aria-live="polite">
-          Showing {list.length} of {FESTIVALS.length}
-        </p>
-
         <div className={`index__grid ${dealt ? 'is-in' : ''}`} ref={grid} key={region}>
-          {list.map((f, i) => <TiltCard key={f.id} f={f} i={i} onOpen={open} />)}
+          {list.map((f, i) => <Row key={f.id} f={f} i={i} onOpen={open} />)}
           {list.length === 0 && (
             <p className="index__empty">Nothing matches “{query}”. Try a state, a festival, or a region.</p>
           )}

@@ -7,6 +7,7 @@ import './Calendar.css';
 
 const COUNTS = MONTHS.map((_, i) => FESTIVALS.filter((f) => f.months.includes(i)).length);
 const ACCENT = Object.fromEntries(REGIONS.map((r) => [r.key, r.accent]));
+const PEAK = Math.max(...COUNTS);
 
 export default function Calendar() {
   const [month, setMonth] = useState(() => new Date().getMonth());
@@ -60,8 +61,9 @@ export default function Calendar() {
                 className={`radar__tab ${month === i ? 'is-on' : ''}`}
                 onClick={() => setMonth(i)}
               >
-                {name.slice(0, 3)}
-                <sup>{COUNTS[i]}</sup>
+                <span className="radar__count" aria-hidden="true">{COUNTS[i]}</span>
+                <span className="radar__bar" style={{ '--h': COUNTS[i] / PEAK }} aria-hidden="true" />
+                <span className="radar__name">{name.slice(0, 3)}</span>
                 <span className="sr-only"> — {COUNTS[i]} festivals</span>
               </button>
             ))}
@@ -69,8 +71,14 @@ export default function Calendar() {
 
           <div id="cal-panel" role="tabpanel" aria-labelledby={`cal-tab-${month}`}>
             <div className="radar__head">
-              <h3 className="display">{MONTHS[month]}</h3>
-              <span className="mono">{list.length} campaign moments · {regions} regions</span>
+              <div className="radar__title">
+                <span className="mono">{String(month + 1).padStart(2, '0')} / 12</span>
+                <h3 className="display">{MONTHS[month]}</h3>
+              </div>
+              <dl className="radar__stats">
+                <div><dt>Campaign moments</dt><dd>{list.length}</dd></div>
+                <div><dt>Regions</dt><dd>{regions}</dd></div>
+              </dl>
               <button
                 className="btn btn--ink radar__plan"
                 onClick={() => { brief.setMonth(month); scrollToTarget('#brief'); }}
@@ -88,12 +96,14 @@ export default function Calendar() {
                   data-cursor="View"
                   style={{ '--accent': ACCENT[f.region] }}
                 >
-                  <span className="radar__img">
-                    <img src={wm(f.file, 500)} alt="" loading="lazy" decoding="async" />
+                  <img src={wm(f.file, 600)} alt="" loading="lazy" decoding="async" />
+                  <span className="radar__region">{f.region}</span>
+                  <span className="radar__body">
+                    <span className="radar__when mono">{f.when}</span>
+                    <strong>{f.festival}</strong>
+                    <span className="radar__meta">{f.state}</span>
+                    {langOf(f.state) && <span className="radar__lang">Make it in {langOf(f.state)}</span>}
                   </span>
-                  <strong>{f.festival}</strong>
-                  <span className="radar__meta">{f.state} · <span className="mono">{f.when}</span></span>
-                  {langOf(f.state) && <span className="radar__lang">Make it in {langOf(f.state)}</span>}
                 </button>
               ))}
             </div>

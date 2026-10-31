@@ -26,6 +26,54 @@ export function saveEvents(next) {
 const subscribe = (fn) => { subs.add(fn); return () => subs.delete(fn); };
 export const useEvents = () => useSyncExternalStore(subscribe, () => events);
 
+/*
+ * Quick-update rewards & awards: list of { id, name, image }
+ * Saved in browser localStorage, falls back to default 10 award platforms.
+ */
+export const DEFAULT_REWARDS = [
+  { id: 'rew-1', name: 'Digixx Award', image: '' },
+  { id: 'rew-2', name: 'Brand Disruption Award', image: '' },
+  { id: 'rew-3', name: 'DMA Asia ECHO Create Awards', image: '' },
+  { id: 'rew-4', name: 'Kaleido', image: '' },
+  { id: 'rew-5', name: 'ET Ascent Stars of Industry', image: '' },
+  { id: 'rew-6', name: 'The Abbys', image: '' },
+  { id: 'rew-7', name: 'The Maddies', image: '' },
+  { id: 'rew-8', name: 'afaqs Marketing Excellence Award', image: '' },
+  { id: 'rew-9', name: 'Drivers of Digital', image: '' },
+  { id: 'rew-10', name: 'EMA', image: '' },
+];
+
+const REWARDS_KEY = 'bcf:rewards';
+
+const readRewards = () => {
+  try {
+    const raw = localStorage.getItem(REWARDS_KEY);
+    return raw ? JSON.parse(raw) : DEFAULT_REWARDS;
+  } catch {
+    return DEFAULT_REWARDS;
+  }
+};
+
+let rewards = readRewards();
+const rewardSubs = new Set();
+
+export function saveRewards(next) {
+  rewards = next;
+  try { localStorage.setItem(REWARDS_KEY, JSON.stringify(next)); } catch { /* quota or blocked storage */ }
+  rewardSubs.forEach((fn) => fn());
+}
+
+export function resetRewards() {
+  saveRewards(DEFAULT_REWARDS);
+}
+
+const subscribeRewards = (fn) => {
+  rewardSubs.add(fn);
+  return () => rewardSubs.delete(fn);
+};
+
+export const useRewards = () => useSyncExternalStore(subscribeRewards, () => rewards);
+
 // `start`/`end` are datetime-local strings ("2026-11-01T18:00"), read as local time.
 export const eventStatus = (e, now = Date.now()) => {
   if (e.start && now < new Date(e.start).getTime()) return 'scheduled';

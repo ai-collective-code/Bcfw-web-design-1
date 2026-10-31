@@ -445,6 +445,12 @@
 }
 .fawards__list li:hover { border-color: #e6c49e; transform: translateY(-3px); box-shadow: 0 12px 28px rgba(124, 66, 25, 0.1); }
 .fawards__list .laurel { width: 36px; height: 36px; color: var(--bronze); }
+.fawards__thumb-wrap {
+  width: 44px; height: 44px; border-radius: 12px; overflow: hidden;
+  display: grid; place-items: center; background: rgba(156, 67, 120, 0.08);
+  border: 1px solid rgba(156, 67, 120, 0.2); box-shadow: 0 4px 12px rgba(156, 67, 120, 0.08);
+}
+.fawards__thumb { width: 100%; height: 100%; object-fit: cover; }
 .fawards__list .mono { position: absolute; top: clamp(14px, 1.5vw, 20px); right: clamp(14px, 1.5vw, 20px); color: var(--ink-3); }
 .fawards__list b {
   font-family: var(--f-display); font-weight: 700; font-size: clamp(15px, 1.25vw, 18px);

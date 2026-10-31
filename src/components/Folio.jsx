@@ -2,8 +2,9 @@ import { useRef, useState } from 'react';
 import { gsap, useGSAP, prefersReducedMotion, onAnchor } from '../lib/motion.js';
 import { BRAND } from '../data/content.js';
 import {
-  FOUNDER, DIVIDERS, CLIENTS, AWARDS, CITATION, PRESS, WORK, ytThumb, ytEmbed,
+  FOUNDER, DIVIDERS, CLIENTS, CITATION, PRESS, WORK, ytThumb, ytEmbed,
 } from '../data/folio.js';
+import { useRewards } from '../lib/quickUpdate.js';
 import { Arrow } from './ui.jsx';
 import './Folio.css';
 import founderPhoto from '../assets/debojit.png';
@@ -142,6 +143,7 @@ function Reel({ group }) {
 /** "BC[f]W Folio 2026" — BCF's portfolio deck, slide for slide. */
 export default function Folio() {
   const root = useRef(null);
+  const rewards = useRewards();
 
   useGSAP(() => {
     if (prefersReducedMotion()) return;
@@ -326,7 +328,7 @@ export default function Folio() {
           <div className="fawards__top">
             <div className="fawards__head">
               <p className="mono">Recognition</p>
-              <h3><b>{AWARDS.length}</b> award platforms have honoured our team’s work</h3>
+              <h3><b>{rewards.length}</b> award platforms have honoured our team’s work</h3>
             </div>
             <aside className="fawards__cite">
               <span className="fawards__medal"><Laurel />{CITATION.medal}</span>
@@ -339,11 +341,17 @@ export default function Folio() {
             </aside>
           </div>
           <ol className="fawards__list">
-            {AWARDS.map((a, i) => (
-              <li key={a}>
-                <Laurel />
+            {rewards.map((a, i) => (
+              <li key={a.id || a.name || i} className={a.image ? 'fawards__item--has-img' : ''}>
+                {a.image ? (
+                  <div className="fawards__thumb-wrap">
+                    <img src={a.image} alt={a.name} className="fawards__thumb" />
+                  </div>
+                ) : (
+                  <Laurel />
+                )}
                 <span className="mono">{String(i + 1).padStart(2, '0')}</span>
-                <b>{a}</b>
+                <b>{a.name}</b>
               </li>
             ))}
           </ol>

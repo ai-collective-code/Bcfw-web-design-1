@@ -603,6 +603,8 @@
 }
 
 @media (max-width: 760px) {
+  .flogos__wall { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .flogos__wall li { --pad: 6px; border-radius: 10px; }
   .fcover { aspect-ratio: auto; min-height: 440px; gap: 40px; padding: 28px 24px; }
   .fcover__bar { max-width: none; flex-wrap: wrap; }
   .fcover__title { font-size: 10.5cqw; }

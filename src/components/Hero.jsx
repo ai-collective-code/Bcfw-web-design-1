@@ -7,6 +7,7 @@ import './Hero.css';
 
 // 3D background photo wall with updated slide order
 const TILT = { rotateX: 26, rotateZ: -15 };
+const TILT_MOBILE = { rotateX: 8, rotateZ: -6 };
 
 /*
  * A wall of festival photographs laid on a tilted plane. Columns sit at two
@@ -23,18 +24,29 @@ export default function Hero({ ready }) {
 
   // The plane leans toward the pointer.
   useEffect(() => {
-    gsap.set(tilt.current, TILT);
-    if (isTouch() || prefersReducedMotion()) return undefined;
+    const getTilt = () => (window.innerWidth <= 1000 ? TILT_MOBILE : TILT);
+    const applyTilt = () => {
+      gsap.set(tilt.current, getTilt());
+    };
+    applyTilt();
+    window.addEventListener('resize', applyTilt);
+    if (isTouch() || prefersReducedMotion()) {
+      return () => window.removeEventListener('resize', applyTilt);
+    }
     const rx = gsap.quickTo(tilt.current, 'rotateX', { duration: 1.2, ease: 'power3' });
     const ry = gsap.quickTo(tilt.current, 'rotateY', { duration: 1.2, ease: 'power3' });
     const move = (e) => {
+      const curTilt = getTilt();
       const x = e.clientX / window.innerWidth - 0.5;
       const y = e.clientY / window.innerHeight - 0.5;
-      rx(TILT.rotateX - y * 6);
+      rx(curTilt.rotateX - y * 6);
       ry(x * 8);
     };
     window.addEventListener('pointermove', move, { passive: true });
-    return () => window.removeEventListener('pointermove', move);
+    return () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('resize', applyTilt);
+    };
   }, []);
 
   // Entrance as the preloader lifts.

@@ -197,22 +197,38 @@
 
 @media (max-width: 1000px) {
   .hero__tags { display: none; }
+  .hero__frame::before { display: none !important; }
+  .hero__scene {
+    perspective: 2400px;
+    perspective-origin: 50% 50%;
+  }
   .hero__tilt { left: 50%; }
   .hero__shade {
     background:
-      linear-gradient(0deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 28%, rgba(255, 255, 255, 0.1) 48%, transparent 66%);
+      linear-gradient(0deg, #ffffff 0%, rgba(255, 255, 255, 0.94) 26%, rgba(255, 255, 255, 0.8) 42%, rgba(255, 255, 255, 0.25) 58%, transparent 72%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 34%, rgba(0, 0, 0, 0.75) 50%, transparent 72%);
+    mask-image: linear-gradient(0deg, #000 0%, #000 34%, rgba(0, 0, 0, 0.75) 50%, transparent 72%);
   }
   .hero__content { top: auto; bottom: clamp(32px, 8vw, 60px); padding-top: 0; }
+  .hero__sub {
+    text-shadow: 0 1px 12px rgba(255, 255, 255, 0.95), 0 1px 2px #ffffff;
+  }
 }
 @media (max-width: 560px) {
-  .hero__frame::before { opacity: 0.35; height: 24%; }
-  .hero__wall { transform: translate(-50%, -50%) scale(0.78); }
+  .hero__frame::before { display: none !important; }
+  .hero__wall { transform: translate(-50%, -50%) scale(0.8); }
   .hero__shade {
     background:
-      linear-gradient(0deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.52) 25%, rgba(255, 255, 255, 0.08) 45%, transparent 60%);
+      linear-gradient(0deg, #ffffff 0%, rgba(255, 255, 255, 0.96) 28%, rgba(255, 255, 255, 0.84) 44%, rgba(255, 255, 255, 0.28) 60%, transparent 75%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.8) 54%, transparent 75%);
+    mask-image: linear-gradient(0deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.8) 54%, transparent 75%);
   }
   .hero__content { bottom: clamp(24px, 6vw, 40px); gap: 20px; }
-  .hero__sub { font-size: 18px; }
+  .hero__sub { font-size: 18px; line-height: 1.45; }
   .hero__ctas .btn { height: 50px; font-size: 15px; padding-left: 18px; }
   .hero__ctas .btn__arrow { width: 36px; height: 36px; }
 }

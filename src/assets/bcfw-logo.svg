@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 76" fill="none">
+  <!-- Brand vertical pillar framing Bharat -->
+  <rect x="144" y="2" width="24" height="74" rx="4" fill="#FF309F"/>
+  
+  <!-- "Bharat" text -->
+  <text x="0" y="32" font-family="'Archivo', system-ui, -apple-system, sans-serif" font-weight="800" font-size="34" letter-spacing="-0.045em" fill="#0b0b1f">Bharat</text>
+  
+  <!-- Lower brand block framing content & fireworks -->
+  <rect x="0" y="38" width="144" height="38" rx="2" fill="#FF309F"/>
+  
+  <!-- "content" text -->
+  <text x="6" y="52" font-family="'Archivo', system-ui, -apple-system, sans-serif" font-weight="500" font-size="14" letter-spacing="-0.01em" fill="#0b0b1f">content</text>
+  
+  <!-- "fireWORKS" text -->
+  <text x="6" y="70" font-family="'Archivo', system-ui, -apple-system, sans-serif" font-size="19" letter-spacing="-0.035em" fill="#0b0b1f">
+    <tspan font-weight="500">fire</tspan><tspan font-weight="800">WORKS</tspan>
+  </text>
+</svg>

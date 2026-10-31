@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap, prefersReducedMotion } from '../lib/motion.js';
-import { GREETINGS, HERO_PRELOAD, wm } from '../data/content.js';
+import { GREETINGS, HERO_PRELOAD } from '../data/content.js';
 import './Preloader.css';
 
 const MIN_MS = 2600; // long enough to read a few greetings
@@ -16,7 +16,7 @@ export default function Preloader({ onDone }) {
   done.current = onDone;
 
   useEffect(() => {
-    const id = setInterval(() => setG((v) => (v + 1) % GREETINGS.length), 190);
+    const id = setInterval(() => setG((v) => Math.min(v + 1, GREETINGS.length - 1)), 190);
     return () => clearInterval(id);
   }, []);
 
@@ -28,7 +28,7 @@ export default function Preloader({ onDone }) {
     const imgs = HERO_PRELOAD.map((f) => {
       const im = new Image();
       im.onload = im.onerror = () => { loaded += 1; };
-      im.src = wm(f.file, 500);
+      im.src = f.src;
       return im;
     });
 
@@ -103,7 +103,7 @@ export default function Preloader({ onDone }) {
       <div className="pre__panel pre__panel--back" />
       <div className="pre__panel pre__panel--main">
         <div className="pre__top pre__fade">
-          <span className="pre__brand">BCF<i /></span>
+          <span className="pre__brand">BC[f]W<i /></span>
           <span className="mono">Win India — one state at a time</span>
         </div>
 

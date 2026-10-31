@@ -17,7 +17,7 @@ export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', '
  * invented: no case results, no testimonials. 36 = 28 states + 8 UTs.
  */
 export const BRAND = {
-  name: 'BCF',
+  name: 'BC[f]W',
   full: 'Bharat Content Fireworks',
   tagline: 'Manufacturers of Regional Stories. At Scale.',
   // Every CTA lands on the brief builder, whose step 4 emails the team (netlify/functions/inquiry.mjs).
@@ -29,9 +29,8 @@ export const BRAND = {
 
 // Preloader. Each greeting is in its own script, with the language it belongs to.
 export const GREETINGS = [
-  { word: 'नमस्ते', roman: 'Namaste', lang: 'Hindi' },
-  { word: 'வணக்கம்', roman: 'Vanakkam', lang: 'Tamil' },
   { word: 'নমস্কার', roman: 'Nomoskar', lang: 'Bengali' },
+  { word: 'வணக்கம்', roman: 'Vanakkam', lang: 'Tamil' },
   { word: 'నమస్కారం', roman: 'Namaskaram', lang: 'Telugu' },
   { word: 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ', roman: 'Sat Sri Akal', lang: 'Punjabi' },
   { word: 'ನಮಸ್ಕಾರ', roman: 'Namaskara', lang: 'Kannada' },
@@ -41,6 +40,7 @@ export const GREETINGS = [
   { word: 'ନମସ୍କାର', roman: 'Namaskar', lang: 'Odia' },
   { word: 'নমস্কাৰ', roman: 'Nomoskar', lang: 'Assamese' },
   { word: 'آداب', roman: 'Aadab', lang: 'Urdu' },
+  { word: 'नमस्ते', roman: 'Namaste', lang: 'Hindi' },
 ];
 
 /*
@@ -63,14 +63,48 @@ export const STATE_LANG = {
 export const langOf = (state) => STATE_LANG[state] ?? null;
 
 // Hero photo wall: six columns of festival moments, mixed across regions.
-export const HERO_WALL = [
-  [19, 1, 33, 10, 24, 11],
-  [31, 9, 22, 13, 32, 3],
-  [20, 28, 14, 17, 25, 4],
-  [16, 30, 15, 26, 8, 18],
-  [12, 23, 21, 6, 29, 2],
-  [7, 34, 27, 5, 36, 35],
-].map((col) => col.map(festivalById));
+const ALL_PRODUCTION = Object.entries(
+  import.meta.glob('../assets/production_images/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' })
+).map(([path, src]) => ({ id: path, src }));
+
+// Dedicated 5 images for the 3rd slide exclusively (S_1, S_2, S_3, S_4, S-5)
+const getFilename = (id) => id.split('/').pop().split('\\').pop().toLowerCase();
+const S_FILENAMES = ['s_1.jpeg', 's_2.jpeg', 's_3.jpeg', 's_4.jpeg', 's-5.jpeg'];
+
+export const S_IMAGES = S_FILENAMES.map((name) =>
+  ALL_PRODUCTION.find((p) => getFilename(p.id) === name)
+).filter(Boolean);
+
+// All other production stills strictly exclude S_1 through S-5 and any Ganguly shoot stills
+const isExcludedFromOtherSlides = (id) => {
+  const fn = getFilename(id);
+  return (
+    fn === 's_1.jpeg' ||
+    fn === 's_2.jpeg' ||
+    fn === 's_3.jpeg' ||
+    fn === 's_4.jpeg' ||
+    fn === 's-5.jpeg' ||
+    fn.startsWith('s_') ||
+    fn.startsWith('s-') ||
+    fn.includes('11.11.34')
+  );
+};
+
+const OTHER_IMAGES = ALL_PRODUCTION.filter(
+  (p) => !isExcludedFromOtherSlides(p.id)
+);
+
+export const HERO_WALL = Array.from({ length: 6 }, (_, c) => {
+  // Swapped: The 4th slide (c === 3) is now populated exclusively by S_1 through S-5
+  if (c === 3) {
+    return S_IMAGES;
+  }
+  // Slides 1, 2, 3, 5, 6 use only the other production images
+  const otherC = c < 3 ? c : c - 1;
+  return Array.from({ length: 5 }, (_, i) =>
+    OTHER_IMAGES[(otherC * 5 + i) % OTHER_IMAGES.length]
+  );
+});
 // Photographs the preloader warms up (the first screenful of the wall).
 export const HERO_PRELOAD = HERO_WALL.flatMap((col) => col.slice(0, 4));
 
@@ -191,6 +225,31 @@ export const LANGUAGES = [
   { native: 'संथाली', name: 'Santali' },
   { native: 'कॉशुर', name: 'Kashmiri' },
 ].map((l) => ({ ...l, img: cultureFor(l.name) }));
+
+// Every language the quick-update picker offers: the 22 Eighth Schedule languages,
+// English, then other widely spoken languages. `native` is omitted where the
+// language is usually written in Latin script.
+export const INDIA_LANGUAGES = [
+  {
+    group: 'Scheduled languages', items: [
+      ['Assamese', 'অসমীয়া'], ['Bengali', 'বাংলা'], ['Bodo', 'बड़ो'], ['Dogri', 'डोगरी'], ['Gujarati', 'ગુજરાતી'],
+      ['Hindi', 'हिन्दी'], ['Kannada', 'ಕನ್ನಡ'], ['Kashmiri', 'کٲشُر'], ['Konkani', 'कोंकणी'], ['Maithili', 'मैथिली'],
+      ['Malayalam', 'മലയാളം'], ['Manipuri', 'ꯃꯩꯇꯩꯂꯣꯟ'], ['Marathi', 'मराठी'], ['Nepali', 'नेपाली'], ['Odia', 'ଓଡ଼ିଆ'],
+      ['Punjabi', 'ਪੰਜਾਬੀ'], ['Sanskrit', 'संस्कृतम्'], ['Santali', 'ᱥᱟᱱᱛᱟᱲᱤ'], ['Sindhi', 'سنڌي'], ['Tamil', 'தமிழ்'],
+      ['Telugu', 'తెలుగు'], ['Urdu', 'اردو'],
+    ]
+  },
+  { group: 'Link language', items: [['English']] },
+  {
+    group: 'Other languages', items: [
+      ['Awadhi', 'अवधी'], ['Bhili', 'भीली'], ['Bhojpuri', 'भोजपुरी'], ['Bundeli', 'बुंदेली'], ['Chhattisgarhi', 'छत्तीसगढ़ी'],
+      ['Garhwali', 'गढ़वाली'], ['Garo'], ['Gondi', 'गोंडी'], ['Haryanvi', 'हरियाणवी'], ['Ho'], ['Khasi'],
+      ['Kodava', 'ಕೊಡವ'], ['Kokborok'], ['Kumaoni', 'कुमाऊँनी'], ['Kurukh', 'कुँड़ुख़'], ['Ladakhi'], ['Lambadi'],
+      ['Lepcha'], ['Magahi', 'मगही'], ['Marwari', 'मारवाड़ी'], ['Mizo'], ['Mundari', 'मुंडारी'], ['Nagamese'],
+      ['Rajasthani', 'राजस्थानी'], ['Tulu', 'ತುಳು'],
+    ]
+  },
+].map((g) => ({ ...g, items: g.items.map(([name, native]) => ({ name, native })) }));
 
 /* ------------------------------------------------------------------
    Marketing copy — all adapted from bcfworks.com

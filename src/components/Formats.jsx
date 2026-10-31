@@ -10,7 +10,7 @@ export default function Formats() {
   return (
     <section className="fmt" id="formats" aria-labelledby="fmt-title">
       <div className="shell">
-        <SectionHead id="fmt-title" n="03" label="The content arsenal" title="Nine formats. *One native voice.*">
+        <SectionHead id="fmt-title" title="Nine formats. *One native voice.*">
           Pick what your campaign needs — every format is written, cast and cut in the language of the market it is for.
         </SectionHead>
 

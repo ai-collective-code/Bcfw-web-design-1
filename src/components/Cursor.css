@@ -2,7 +2,7 @@
 .cur span {
   position: absolute; left: 14px; top: 14px; white-space: nowrap;
   padding: 8px 14px; border-radius: 999px;
-  background: var(--lime); color: var(--ink);
+  background: var(--pink); color: #fff;
   font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.04em;
   box-shadow: 0 10px 30px -8px rgba(11, 11, 31, 0.35);
   transform: scale(0.4); opacity: 0; transform-origin: 0 0;

@@ -32,7 +32,6 @@ export default function Lens() {
       <div className="lens__frame on-night">
         <div className="shell">
           <div className="lens__top">
-            <span className="tag"><b>The opportunity</b> The Bharat lens</span>
             <h2 id="lens-title" className="display lens__head">
               <Words text="Regional India isn’t a segment. *It’s the market.*" />
             </h2>

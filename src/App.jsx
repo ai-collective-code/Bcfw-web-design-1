@@ -7,15 +7,11 @@ import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
 import Marquee from './components/Marquee.jsx';
 import Problem from './components/Problem.jsx';
-import Lens from './components/Lens.jsx';
-import Services from './components/Services.jsx';
-import Formats from './components/Formats.jsx';
 import Folio from './components/Folio.jsx';
 import Journey from './components/Journey.jsx';
 import Regions from './components/Regions.jsx';
 import Calendar from './components/Calendar.jsx';
 import Brief from './components/Brief.jsx';
-import Process from './components/Process.jsx';
 import Languages from './components/Languages.jsx';
 import Atlas from './components/Atlas.jsx';
 import Arts from './components/Arts.jsx';
@@ -87,15 +83,11 @@ export default function App() {
         <Hero ready={ready} />
         <Marquee />
         <Problem />
-        <Lens />
-        <Services />
-        <Formats />
         <Folio />
         <Journey />
         <Regions />
         <Calendar />
         <Brief />
-        <Process />
         <Languages />
         <Atlas />
         <Arts />

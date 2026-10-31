@@ -63,12 +63,11 @@ rounded (22–36px), pills for tags and buttons, glass panels over photography.
 | 05 | `Regions` | Seven regions. Seven playbooks. | Stacking cards: languages, peak moments, “Plan for…” |
 | 06 | `Calendar` | Never miss a moment | Month tabs → moments → “Plan [month] campaigns” |
 | 07 | `Brief` | Plan your India campaign in 30 seconds | Brief builder; copies the brief and opens the inquiry form |
-| 08 | `Process` | From brief to live, in four moves | Decode → Originate → Produce → Launch (72hr) |
-| 09 | `Languages` | 22+ languages. Zero dubbing. | **3D** script sphere + dubbed-vs-original table |
-| 10 | `Atlas` | 36 markets. Their biggest moments. | Market index, drawer with “Plan a campaign in…” |
-| 11 | `Arts` | Borrow the codes, not the clichés | **3D** coverflow of cultural codes |
-| 12 | `Faq` | Before you brief us | Objection handling |
-| — | `Finale` | Your brand. Bharat’s story. | Closing CTA, footer, photo credits |
+| 08 | `Languages` | 22+ languages. Zero dubbing. | **3D** script sphere + dubbed-vs-original table |
+| 09 | `Atlas` | 36 markets. Their biggest moments. | Market index, drawer with “Plan a campaign in…” |
+| 10 | `Arts` | Borrow the codes, not the clichés | **3D** coverflow of cultural codes |
+| 11 | `Faq` | Before you brief us | Objection handling |
+| — | `Finale` | — | Footer navigation, studios, and photo credits |
 | — | `StickyCta` | — | Floating bar after the hero; reflects the brief |
 
 `src/lib/brief.js` is a tiny shared store: formats, regions, the calendar and the market drawer all

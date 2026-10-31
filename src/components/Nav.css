@@ -1,46 +1,413 @@
+/* ==========================================================================
+   Navigation Bar & Floating Island System
+   ========================================================================== */
+
 .nav {
   position: fixed; top: calc(14px + env(safe-area-inset-top)); left: 0; right: 0; z-index: 100;
   display: flex; justify-content: center; padding: 0 var(--gutter); pointer-events: none;
   transition: transform 0.6s var(--ease-out);
 }
-.nav.is-hidden { transform: translateY(calc(-100% - 30px)); }
+.nav.is-hidden { transform: translateY(calc(-100% - 150px)); } /* far enough to hide the hanging logo too */
 
+@keyframes navFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.nav__inner {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: fit-content; max-width: 100%;
+  pointer-events: none;
+  animation: navFloatIn 0.8s var(--ease-out) both;
+  transition: transform 0.3s var(--ease-out);
+}
+
+/* Base Pill Style - Strict 50px Height for Exact Alignment */
 .nav__pill {
-  pointer-events: auto; width: min(1180px, 100%);
-  display: flex; align-items: center; gap: 22px; padding: 7px 7px 7px 22px;
-  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.62);
-  backdrop-filter: blur(18px) saturate(1.6); -webkit-backdrop-filter: blur(18px) saturate(1.6);
-  box-shadow: 0 8px 30px -12px rgba(11, 11, 31, 0.2);
-  transition: background 0.4s, border-color 0.4s;
+  pointer-events: auto;
+  display: flex; align-items: center;
+  height: 50px;
+  box-sizing: border-box;
+  border-radius: 999px; border: 1px solid rgba(255, 48, 159, 0.35);
+  background-color: #FF98CF;
+  background: color-mix(in srgb, #FF309F 50%, #ffffff 50%);
+  backdrop-filter: blur(20px) saturate(1.7); -webkit-backdrop-filter: blur(20px) saturate(1.7);
+  box-shadow: 0 10px 30px -8px rgba(255, 48, 159, 0.32), 0 3px 12px -3px rgba(11, 11, 31, 0.08);
+  transition: background 0.4s var(--ease-out), border-color 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), transform 0.35s var(--ease-out);
 }
-.nav.is-scrolled .nav__pill { background: rgba(255, 255, 255, 0.82); border-color: var(--line); }
-
-.nav__brand {
-  display: inline-flex; align-items: flex-start; gap: 3px; margin-right: auto;
-  font-family: var(--f-display); font-weight: 800; font-size: 24px; letter-spacing: -0.05em; line-height: 1;
+.nav.is-scrolled .nav__pill {
+  background-color: #FF98CF;
+  background: color-mix(in srgb, #FF309F 52%, #ffffff 48%);
+  border-color: rgba(255, 48, 159, 0.48);
+  box-shadow: 0 14px 38px -6px rgba(255, 48, 159, 0.42), 0 4px 14px -3px rgba(11, 11, 31, 0.12);
 }
-.nav__brand i { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 2px var(--ink); margin-top: 3px; }
 
-.nav__links { display: flex; gap: 4px; }
+/* --------------------------------------------------------------------------
+   Logo Nav Bar - Same Exact 50px Height as the Second Nav Bar
+   -------------------------------------------------------------------------- */
+.nav__pill--brand {
+  position: relative;
+  flex-shrink: 0;
+  height: 50px;
+  box-sizing: border-box;
+  padding: 0 20px;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s var(--ease-out), border-color 0.4s var(--ease-out), background 0.4s var(--ease-out);
+}
+
+/* Periodic Ambient Shimmer Sweep Animation */
+@keyframes sheenSweep {
+  0%, 70% {
+    transform: rotate(25deg) translate(-100%, 0);
+    opacity: 0;
+  }
+  75% {
+    opacity: 0.65;
+  }
+  88% {
+    transform: rotate(25deg) translate(300%, 0);
+    opacity: 0.65;
+  }
+  100% {
+    transform: rotate(25deg) translate(300%, 0);
+    opacity: 0;
+  }
+}
+
+.nav__pill--brand::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: rotate(25deg);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1;
+  animation: sheenSweep 4.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.3s ease;
+}
+/* Logo sits bare: no pill background, border, blur or shadow behind it. */
+.nav .nav__pill--brand,
+.nav.is-scrolled .nav__pill--brand,
+.nav .nav__pill--brand:hover {
+  background: none; background-color: transparent; border-color: transparent; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none; overflow: visible;
+}
+.nav__pill--brand::before { display: none; }
+.nav__pill--brand:hover::before {
+  opacity: 1;
+  animation-duration: 1.2s;
+}
+
+.nav__pill--brand:hover {
+  transform: translateY(-2px) scale(1.035);
+  border-color: rgba(255, 48, 159, 0.65);
+  box-shadow: 0 14px 38px -4px rgba(255, 48, 159, 0.48), 0 0 20px -2px rgba(255, 48, 159, 0.35);
+}
+.nav__pill--brand:active {
+  transform: translateY(0) scale(0.96);
+  transition-duration: 0.1s;
+}
+
+/* Subtle Breathing Neon Glow on the Brand Fireworks Corner */
+@keyframes fireworkBreath {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 rgba(255, 48, 159, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 5px rgba(255, 48, 159, 0.6));
+  }
+}
+
+/* Pure Vector Brand Mark - Precisely Sized for 50px Pill */
+.nav__brand-mark {
+  --u: 8.9px;
+  position: relative;
+  z-index: 2;
+  display: inline-grid;
+  grid-template-columns: auto calc(var(--u) * 1.85);
+  grid-template-rows: auto auto;
+  text-decoration: none;
+  color: var(--ink);
+  line-height: 1;
+  font-family: 'Archivo', var(--f-display), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  user-select: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav__pill--brand:hover .nav__brand-mark {
+  transform: scale(1.03);
+}
+
+/* Temple-bell sway: hangs from the top edge and swings mostly to the left. Uses the `rotate`
+   property so it doesn't fight the hover `transform` above. */
+@keyframes bellSwing {
+  0%, 100% { rotate: -7deg; }
+  50% { rotate: 2deg; }
+}
+.nav__brand-mark {
+  --thread: calc(var(--u) * 11);
+  top: 48px; /* hangs a little lower */
+  left: -64px; /* and sits further to the left */
+  /* Pivot at the top of the thread, above the centre of the vertical bar. */
+  transform-origin: calc(100% - var(--u) * 0.925) calc(var(--u) * -0.9 - var(--thread));
+  animation: bellSwing 3.2s ease-in-out infinite;
+}
+/* The thin thread the logo hangs from, attached to the top of the long vertical bar. */
+.nav__brand-mark .l-bar::before {
+  content: ''; position: absolute; left: 50%; bottom: 100%;
+  width: 1.5px; height: var(--thread); margin-left: -0.75px;
+  background: #0b0b1f; pointer-events: none;
+}
+/* Scroll nudge: a bigger swing to the left that settles back into the idle sway. */
+@keyframes bellKick {
+  0%   { rotate: -7deg; }
+  18%  { rotate: -20deg; }
+  42%  { rotate: 7deg; }
+  62%  { rotate: -13deg; }
+  82%  { rotate: 0deg; }
+  100% { rotate: -7deg; }
+}
+.nav__brand-mark.is-kick { animation: bellKick 1.8s ease-in-out 1; }
+@media (prefers-reduced-motion: reduce) {
+  .nav__brand-mark, .nav__brand-mark.is-kick { animation: none; }
+}
+
+.nav__brand-mark .l-bharat {
+  grid-column: 1;
+  grid-row: 1;
+  font-weight: 800;
+  font-size: calc(var(--u) * 2.7);
+  letter-spacing: -0.045em;
+  padding: 0 0.1em 0.03em 0;
+  align-self: end;
+  color: #0b0b1f;
+  line-height: 0.95;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease;
+}
+.nav__pill--brand:hover .nav__brand-mark .l-bharat {
+  transform: translateX(1.5px);
+}
+
+.nav__brand-mark .l-block {
+  grid-column: 1;
+  grid-row: 2;
+  background: #FF309F;
+  color: #0b0b1f;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--u) * 0.12) calc(var(--u) * 0.2) calc(var(--u) * 0.24) calc(var(--u) * 0.12);
+  border-radius: 2px 0 2px 2px;
+  box-shadow: 0 2px 6px -1px rgba(255, 48, 159, 0.35);
+  animation: fireworkBreath 3.2s infinite ease-in-out;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+.nav__pill--brand:hover .nav__brand-mark .l-block {
+  background: #ff1c97;
+  box-shadow: 0 4px 12px -1px rgba(255, 48, 159, 0.55);
+  filter: brightness(1.08);
+}
+
+.nav__brand-mark .l-content {
+  font-size: calc(var(--u) * 1.25);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  color: #0b0b1f;
+}
+
+.nav__brand-mark .l-fire {
+  font-size: calc(var(--u) * 1.75);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  margin-top: calc(var(--u) * 0.04);
+  line-height: 1;
+  color: #0b0b1f;
+  transition: transform 0.3s ease;
+}
+.nav__brand-mark .l-fire b {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+.nav__pill--brand:hover .nav__brand-mark .l-fire b {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.85);
+}
+
+.nav__brand-mark .l-bar {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  background: #FF309F;
+  margin-top: calc(var(--u) * -0.9);
+  border-radius: 0 3px 2px 0;
+  box-shadow: 2px 0 6px -1px rgba(255, 48, 159, 0.35);
+  animation: fireworkBreath 3.2s infinite ease-in-out;
+  transition: background-color 0.35s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, filter 0.35s ease;
+}
+.nav__pill--brand:hover .nav__brand-mark .l-bar {
+  background: #ff1c97;
+  transform: translateY(-2px) scaleY(1.05);
+  box-shadow: 2px -2px 10px 0 rgba(255, 48, 159, 0.6);
+  filter: brightness(1.1);
+}
+
+/* Twinkling Firework Spark Particle on Pillar Tip */
+@keyframes sparkTwinkle {
+  0%, 100% {
+    transform: scale(0.65);
+    opacity: 0.35;
+    box-shadow: 0 0 4px 1px #FF309F;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+    box-shadow: 0 0 8px 2px #FF309F, 0 0 12px 4px rgba(255, 255, 255, 0.95);
+  }
+}
+
+.l-spark {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+  pointer-events: none;
+  animation: sparkTwinkle 2.4s infinite ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   Second Nav Bar (Menu) - Same Exact 50px Height
+   -------------------------------------------------------------------------- */
+.nav__pill--menu {
+  height: 50px;
+  box-sizing: border-box;
+  gap: 10px;
+  padding: 0 5px 0 14px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), border-color 0.4s var(--ease-out), background 0.4s var(--ease-out);
+}
+.nav__pill--menu:hover {
+  border-color: rgba(255, 48, 159, 0.52);
+  box-shadow: 0 14px 38px -6px rgba(255, 48, 159, 0.42), 0 3px 12px -2px rgba(11, 11, 31, 0.1);
+}
+
+.nav__links { display: flex; gap: 4px; align-items: center; }
 .nav__links a {
-  padding: 9px 14px; border-radius: 999px; font-size: 15px; font-weight: 500; color: var(--ink-2);
-  transition: background 0.3s, color 0.3s;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #5c0533;
+  text-decoration: none;
+  transition: background 0.28s var(--ease-out), color 0.28s var(--ease-out), transform 0.28s var(--ease-out), box-shadow 0.28s var(--ease-out);
 }
-.nav__links a:hover { background: var(--surface-2); color: var(--ink); }
+.nav__links a:hover {
+  background: #ffffff;
+  color: #FF309F;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px -3px rgba(255, 48, 159, 0.25);
+}
+.nav__links a:active {
+  transform: translateY(0) scale(0.96);
+  transition-duration: 0.1s;
+}
 
-.nav__cta { height: 46px; padding-left: 20px; font-size: 15px; }
-.nav__cta .btn__arrow { width: 32px; height: 32px; font-size: 14px; }
+.nav__divider {
+  width: 1px; height: 20px;
+  background: rgba(92, 5, 51, 0.22);
+  flex-shrink: 0;
+  margin: 0 2px;
+  transition: background 0.3s ease;
+}
+.nav__pill--menu:hover .nav__divider {
+  background: rgba(92, 5, 51, 0.32);
+}
 
-.nav__burger { display: none; width: 46px; height: 46px; border-radius: 50%; background: var(--ink); position: relative; }
+.nav .nav__cta {
+  background: #fff;
+  color: var(--ink);
+  transition: transform 0.32s var(--ease-out), box-shadow 0.32s var(--ease-out), background 0.3s, color 0.3s;
+}
+.nav .nav__cta:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 10px 24px -5px rgba(255, 48, 159, 0.45);
+}
+.nav .nav__cta:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.1s;
+}
+.nav__cta { height: 42px; padding-left: 18px; font-size: 14.5px; }
+.nav__cta .btn__arrow {
+  width: 30px;
+  height: 30px;
+  font-size: 13px;
+  transition: transform 0.35s var(--ease-out), background 0.3s;
+}
+.nav .nav__cta .btn__arrow { background: #FF309F; color: #fff; }
+.nav .nav__cta:hover .btn__arrow {
+  transform: translate(2px, -2px) rotate(45deg);
+  background: #e0007b;
+}
+
+.nav .qu__open {
+  flex-shrink: 0; width: 42px; height: 42px; padding: 0; justify-content: center;
+  background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.8); color: #FF309F;
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.22);
+  transition: transform 0.32s var(--ease-out), box-shadow 0.32s var(--ease-out), background 0.3s, border-color 0.3s, color 0.3s;
+}
+.nav .qu__open:hover {
+  transform: translateY(-1.5px) rotate(8deg) scale(1.06);
+  background: #ffffff;
+  color: #e0007b;
+  border-color: rgba(255, 48, 159, 0.4);
+  box-shadow: 0 10px 22px -5px rgba(255, 48, 159, 0.38);
+}
+.nav .qu__open:active {
+  transform: translateY(0) scale(0.95);
+  transition-duration: 0.1s;
+}
+
+.nav__burger {
+  display: none; width: 38px; height: 38px; border-radius: 50%; background: #fff; position: relative;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+.nav__burger:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px -4px rgba(255, 48, 159, 0.35);
+}
 .nav__burger i {
-  position: absolute; left: 14px; right: 14px; height: 2px; border-radius: 2px; background: #fff;
+  position: absolute; left: 11px; right: 11px; height: 2px; border-radius: 2px; background: #FF309F;
   transition: transform 0.5s var(--ease-out), top 0.5s var(--ease-out);
 }
-.nav__burger i:first-child { top: 19px; }
-.nav__burger i:last-child { top: 26px; }
-.nav__burger.is-open i:first-child { top: 22px; transform: rotate(45deg); }
-.nav__burger.is-open i:last-child { top: 22px; transform: rotate(-45deg); }
+.nav__burger i:first-child { top: 15px; }
+.nav__burger i:last-child { top: 21px; }
+.nav__burger.is-open i:first-child { top: 18px; transform: rotate(45deg); }
+.nav__burger.is-open i:last-child { top: 18px; transform: rotate(-45deg); }
 
 .drawer {
   position: fixed; inset: 0; z-index: 99; background: var(--night); color: var(--on-night);
@@ -56,14 +423,21 @@
   opacity: 0; transform: translateY(30px);
   transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
 }
-.drawer nav a .mono { color: var(--lime); }
+.drawer nav a .mono { color: var(--pink); }
 .drawer.is-open nav a { opacity: 1; transform: none; transition-delay: calc(0.25s + var(--i) * 0.05s); }
 .drawer__cta { justify-self: start; }
 
-@media (max-width: 1120px) { .nav__links { display: none; } }
+@media (max-width: 1120px) {
+  .nav__links { display: none; }
+  .nav__divider { display: none; }
+}
 @media (max-width: 720px) {
+  .nav__inner { width: 100%; justify-content: space-between; gap: 8px; }
+  .nav__pill { height: 44px; }
+  .nav__pill--brand { padding: 0 14px; height: 44px; }
+  .nav__brand-mark { --u: 6.6px; --thread: calc(var(--u) * 7); top: 18px; left: -4px; }
+  .nav__pill--menu { padding: 0 4px 0 10px; height: 44px; gap: 6px; }
   .nav__cta { display: none; }
-  .nav__burger { display: block; }
-  .nav__pill { padding-left: 18px; }
+  .nav__burger { display: block; width: 38px; height: 38px; }
 }
 @media (min-width: 721px) { .drawer { display: none; } }

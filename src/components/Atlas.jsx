@@ -172,7 +172,7 @@ export default function Atlas() {
   return (
     <section className="index" id="atlas" aria-labelledby="atlas-title">
       <div className="shell">
-        <SectionHead id="atlas-title" n="10" label="Market index" title="36 markets. *Their biggest moments.*">
+        <SectionHead id="atlas-title" n="09" label="Market index" title="36 markets. *Their biggest moments.*">
           Every state and union territory, its peak moment and the language we would make it in. Open any market
           to plan around it.
         </SectionHead>

@@ -28,7 +28,6 @@ export default function Marquee() {
 
   return (
     <section className="mq" aria-label="Languages and formats BCF produces in">
-      <p className="mq__label mono"><span>We originate in</span> 22+ languages · 9 formats</p>
       <Row>{langs}</Row>
       <Row reverse>{formats}{formats}</Row>
     </section>

@@ -23,7 +23,7 @@ export default function SectionHead({ id, n, label, title, children, className =
   return (
     <header className={`sec-head ${className}`} ref={root}>
       <div className="sec-head__main">
-        <span className="tag"><b>({n})</b> {label}</span>
+        {label && <span className="tag"><b>({n})</b> {label}</span>}
         <h2 id={id} className="display"><Words text={title} /></h2>
       </div>
       {children && <p data-reveal>{children}</p>}

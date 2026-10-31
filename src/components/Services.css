@@ -29,12 +29,15 @@
 .svc__band {
   display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
   margin-top: 14px; padding: 22px 22px 22px 32px; border-radius: 999px;
-  background: var(--lime);
+  background: #fbd3e6;
 }
 .svc__band p { margin: 0; max-width: 70ch; font-size: 17px; }
 .svc__band b { font-family: var(--f-display); font-weight: 700; letter-spacing: -0.02em; }
+.svc__band .btn__arrow { background: var(--pink); color: #fff; }
 
 @media (max-width: 960px) {
   .svc__grid { grid-template-columns: 1fr; }
   .svc__band { border-radius: 28px; padding: 24px; }
 }
+
+.svc .display em { color: var(--pink); }

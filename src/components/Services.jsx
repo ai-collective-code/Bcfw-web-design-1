@@ -9,7 +9,7 @@ export default function Services() {
   return (
     <section className="svc" id="services" aria-labelledby="svc-title">
       <div className="shell">
-        <SectionHead id="svc-title" n="02" label="What we do" title="Three ways we make your brand *local.*">
+        <SectionHead id="svc-title" title="Three ways we make your brand *local.*">
           Not by translating. By originating — with the speed of a newsroom and the scale of a machine.
         </SectionHead>
 

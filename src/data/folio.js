@@ -27,8 +27,8 @@ export const FOUNDER = {
 
 // The deck's section dividers: an English word, its Hindustani twin, and the slide's colours.
 export const DIVIDERS = {
-  portfolio: { word: 'Portfolio', script: 'branded content producer', bg: '#FDBC1B', fg: '#0E4B24', sc: '#FFFFFF', size: 40, style: 'shadow' },
-  awards: { word: 'Awards', script: 'tareefein', bg: '#FF6AC1', fg: '#E3197B', sc: '#F8B418', size: 52, style: 'offset' },
+  portfolio: { word: 'Portfolio', script: 'branded content producer', bg: '#F2679F', fg: '#3D0A2E', sc: '#FFFFFF', size: 36.5, style: 'shadow' },
+  awards: { word: 'Awards', script: 'tareefein', bg: '#FF6AC1', fg: '#E3197B', sc: '#F8B418', size: 45.5, style: 'offset' },
   scripted: { word: 'Scripted', script: 'kahani', bg: '#9DD5C8', fg: '#E2DC4F', sc: '#FFFFFF', size: 44, style: 'shadow' },
   ai: { word: 'AI', script: 'a-insaan', bg: '#F86A1C', fg: '#FDBC1B', sc: '#F6E7CF', size: 135, style: 'shadow' },
   activation: { word: 'Activation', script: 'tamasha', bg: '#FDBC1B', fg: '#E4217C', sc: '#FFFFFF', size: 31, style: 'flat' },

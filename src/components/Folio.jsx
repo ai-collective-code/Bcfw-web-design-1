@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { gsap, useGSAP, prefersReducedMotion, onAnchor } from '../lib/motion.js';
 import { BRAND } from '../data/content.js';
 import {
-  FOLIO_COVER, FOUNDER, DIVIDERS, CLIENTS, AWARDS, CITATION, PRESS, WORK, ytThumb, ytEmbed,
+  FOUNDER, DIVIDERS, CLIENTS, AWARDS, CITATION, PRESS, WORK, ytThumb, ytEmbed,
 } from '../data/folio.js';
 import { Arrow } from './ui.jsx';
 import './Folio.css';
@@ -45,6 +45,7 @@ const Mark = ({ at = 'top' }) => <i className={`fmark fmark--${at}`} aria-hidden
 
 function Divider({ k }) {
   const d = DIVIDERS[k];
+  const chars = Array.from(d.word);
   return (
     <div
       className={`fdiv fdiv--${k} fdiv--${d.style}`}
@@ -53,7 +54,13 @@ function Divider({ k }) {
     >
       <Mark />
       <h3 className="fdiv__title">
-        <span className="fdiv__word">{d.word}</span>
+        <span className="fdiv__word" aria-label={d.word}>
+          {chars.map((ch, i) => (
+            <span key={i} className="fdiv__char" aria-hidden="true">
+              {ch === ' ' ? '\u00A0' : ch}
+            </span>
+          ))}
+        </span>
         <span className="fdiv__script">{d.script}</span>
       </h3>
     </div>
@@ -136,48 +143,170 @@ function Reel({ group }) {
 export default function Folio() {
   const root = useRef(null);
 
-  // The big divider words drift sideways as they pass, like a slow pan across the slide.
   useGSAP(() => {
     if (prefersReducedMotion()) return;
-    gsap.utils.toArray('.fdiv__word', root.current).forEach((el) => {
-      const slide = el.closest('.fdiv');
-      const base = slide.classList.contains('fdiv--ai') ? 0 : -50;
-      // x: 0 discards the px offset GSAP would otherwise parse out of the CSS translateX(-50%).
-      gsap.fromTo(el, { x: 0, xPercent: base + 3 }, {
-        xPercent: base - 3, ease: 'none',
-        scrollTrigger: { trigger: slide, start: 'top bottom', end: 'bottom top', scrub: true },
+
+    // Staggered drop bounce effect for letters as each divider enters view on scroll
+    gsap.utils.toArray('.fdiv', root.current).forEach((slide) => {
+      const chars = slide.querySelectorAll('.fdiv__char');
+      const script = slide.querySelector('.fdiv__script');
+      if (!chars.length) return;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: slide,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
       });
+
+      // 1. Letters drop in sequentially with bounce: A -> W -> A -> R -> D -> S
+      tl.fromTo(chars, {
+        y: '-135%',
+        opacity: 0,
+        scaleY: 1.25,
+      }, {
+        y: '0%',
+        opacity: 1,
+        scaleY: 1,
+        duration: 0.72,
+        ease: 'back.out(2)',
+        stagger: 0.08,
+      });
+
+      // 2. Script overlay floats in across the letters
+      if (script) {
+        tl.fromTo(script, {
+          y: -24,
+          opacity: 0,
+          scale: 0.85,
+        }, {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.55,
+          ease: 'power2.out',
+        }, '-=0.35');
+      }
+    });
+
+    // 2. On-Scroll dynamic scrub parallax (works smoothly as the user scrolls through!)
+    gsap.utils.toArray('.fdiv', root.current).forEach((slide) => {
+      const word = slide.querySelector('.fdiv__word');
+      const script = slide.querySelector('.fdiv__script');
+      const isPortfolio = slide.classList.contains('fdiv--portfolio');
+      const isAi = slide.classList.contains('fdiv--ai');
+      const base = isAi ? 0 : -50;
+
+      // Word drifts horizontally and vertically with depth on scroll
+      if (word) {
+        const xStart = isPortfolio ? base - 2.5 : base + 3.5;
+        const xEnd = isPortfolio ? base + 2.5 : base - 3.5;
+
+        gsap.fromTo(word, {
+          x: 0,
+          xPercent: xStart,
+          y: 18,
+        }, {
+          xPercent: xEnd,
+          y: -18,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: slide,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.1,
+          },
+        });
+      }
+
+      // Script overlay glides with floating counter-parallax across the bold caps
+      if (script) {
+        gsap.fromTo(script, {
+          x: isPortfolio ? -32 : -22,
+          y: 16,
+          rotation: isPortfolio ? -2 : -1.2,
+        }, {
+          x: isPortfolio ? 32 : 22,
+          y: -16,
+          rotation: isPortfolio ? 2 : 1.2,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: slide,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.1,
+          },
+        });
+      }
     });
   }, { scope: root });
 
   return (
     <section className="folio" id="work" aria-labelledby="folio-title" ref={root}>
       <div className="shell folio__stack">
-        <p className="tag"><b>The work</b> BC[f]W Folio 2026</p>
-
-        <div className="fslide fcover" data-reveal>
-          <div className="fcover__bar">
-            <span>BC[f]W Folio</span>
-            <span>{FOLIO_COVER.cities.join(' · ')}</span>
-          </div>
-          <h2 id="folio-title" className="fcover__title">
-            {FOLIO_COVER.lines.map((line, i) => (
-              <span className="fcover__line" key={i}>
-                {line.map(([t, tone]) => <span className={`is-${tone}`} key={t}>{t}</span>)}
-              </span>
-            ))}
-          </h2>
-          <div className="fcover__foot">
-            <p className="fcover__reg">Registered under <b>{FOLIO_COVER.company}</b></p>
-          </div>
-          <div className="fcover__sun" aria-hidden="true"><span>{FOLIO_COVER.year}</span></div>
-        </div>
+        <h2 className="tag" id="folio-title"><b>The work</b> BC[f]W Folio 2026</h2>
 
         <div className="fslide ffounder" data-reveal>
-          <div className="ffounder__photo"><img src={founderPhoto} alt={`${FOUNDER.name}, ${FOUNDER.role} of BC[f]W`} width="230" height="230" loading="lazy" /></div>
-          <div className="ffounder__text">
-            <h3>{FOUNDER.role}. {FOUNDER.name}</h3>
-            {FOUNDER.paras.map((p) => <p key={p}>{p}</p>)}
+          <div className="ffounder__media">
+            <div className="ffounder__frame">
+              <div className="ffounder__photo">
+                <img
+                  src={founderPhoto}
+                  alt={`${FOUNDER.name}, ${FOUNDER.role} of BC[f]W`}
+                  width="320"
+                  height="380"
+                  loading="lazy"
+                />
+              </div>
+              <div className="ffounder__stamp">
+                <span className="ffounder__stamp-val">20+</span>
+                <span className="ffounder__stamp-lbl">Yrs Content</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="ffounder__body">
+            <div className="ffounder__top">
+              <span className="ffounder__badge">
+                <i className="ffounder__pulse" aria-hidden="true" /> Leadership · {FOUNDER.role}
+              </span>
+              <h3 className="ffounder__name">
+                {FOUNDER.name}
+                <span className="ffounder__role-tag">Creative &amp; Content Architect</span>
+              </h3>
+              <p className="ffounder__lede">
+                Pioneering regional branded storytelling, deep vernacular insights, and AI-powered content innovation at scale.
+              </p>
+            </div>
+
+            <div className="ffounder__chips">
+              <span className="ffounder__chip">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" /></svg>
+                Calcutta Xaverian &amp; IIMB
+              </span>
+              <span className="ffounder__chip">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" /></svg>
+                Ex-Radio One Regional Lead
+              </span>
+              <span className="ffounder__chip">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                Co-Founder, ICE Media Lab
+              </span>
+              <span className="ffounder__chip">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" /></svg>
+                AI &amp; Scaled Innovation
+              </span>
+            </div>
+
+            <div className="ffounder__story">
+              {FOUNDER.paras.map((p, idx) => (
+                <div key={idx} className="ffounder__para-row">
+                  <span className="ffounder__step-num">0{idx + 1}</span>
+                  <p>{p}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

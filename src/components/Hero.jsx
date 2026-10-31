@@ -1,16 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { gsap, useGSAP, onAnchor, isTouch, prefersReducedMotion } from '../lib/motion.js';
-import { HERO_WALL, BRAND, wm } from '../data/content.js';
+import { HERO_WALL, BRAND } from '../data/content.js';
 import { Words, Arrow } from './ui.jsx';
+import { useLiveEvents } from '../lib/quickUpdate.js';
 import './Hero.css';
 
+// 3D background photo wall with updated slide order
 const TILT = { rotateX: 26, rotateZ: -15 };
-// Illustrative planning tags (format · language · moment) — not past work.
-const TAGS = [
-  ['Reel series', 'Tamil', 'Pongal'],
-  ['Brand film', 'Bengali', 'Durga Puja'],
-  ['Pre-roll', 'Marathi', 'Ganesh Chaturthi'],
-];
 
 /*
  * A wall of festival photographs laid on a tilted plane. Columns sit at two
@@ -22,6 +18,8 @@ export default function Hero({ ready }) {
   const root = useRef(null);
   const frame = useRef(null);
   const tilt = useRef(null);
+  const events = useLiveEvents();
+  const tags = events.map((e) => [e.format, e.language, e.moment]);
 
   // The plane leans toward the pointer.
   useEffect(() => {
@@ -77,7 +75,7 @@ export default function Hero({ ready }) {
 
   return (
     <section className="hero" id="top" ref={root} aria-labelledby="hero-title">
-      <div className="hero__frame on-night" ref={frame}>
+      <div className="hero__frame" ref={frame}>
         <div className="hero__scene" aria-hidden="true">
           <div className="hero__tilt" ref={tilt}>
             <div className="hero__wall">
@@ -90,7 +88,7 @@ export default function Hero({ ready }) {
                   <div className="wall__track">
                     {[...col, ...col].map((f, i) => (
                       <figure className="wall__card" key={`${f.id}-${i}`}>
-                        <img src={wm(f.file, 500)} alt="" draggable="false" decoding="async" />
+                        <img src={f.src} alt="" draggable="false" decoding="async" />
                       </figure>
                     ))}
                   </div>
@@ -102,39 +100,37 @@ export default function Hero({ ready }) {
         <div className="hero__shade" aria-hidden="true" />
 
         {/* Planning tags floating over the wall: format · language · moment */}
-        <ul className="hero__tags" aria-hidden="true">
-          {TAGS.map((t, i) => (
-            <li key={t[0]} data-hi style={{ '--d': `${i * 1.3}s` }}>
-              <b>{t[0]}</b><span>{t[1]}</span><em>{t[2]}</em>
-            </li>
-          ))}
-        </ul>
+        {tags.length > 0 && (
+          <div className="hero__tags" aria-hidden="true">
+            <p className="hero__tags-head" data-hi><i />What's going on</p>
+            <ul>
+              {tags.map((t, i) => (
+                <li key={i} data-hi style={{ '--d': `${i * 1.3}s`, '--s': `${i * 1.6}s` }}>
+                  <i className="hero__tags-dot" /><b>{t[0]}</b><span>{t[1]}</span><em>{t[2]}</em>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="hero__content">
-          <span className="tag" data-hi><b>BCF</b> Regional content for brands</span>
           <h1 id="hero-title" className="display hero__title">
             <Words text="Win India, *one state* at a time." />
           </h1>
           <p className="hero__sub" data-hi>
-            We originate films, reels and festival campaigns in 22+ Indian languages — so your brand
+            We originate films, reels and festival campaigns in 22+ Indian languages so your brand
             sounds local in every state, not dubbed.
           </p>
           <div className="hero__ctas" data-hi>
             <a href={BRAND.contact} className="btn btn--lime" onClick={onAnchor}>
               Start your campaign <Arrow />
             </a>
-            <a href="#brief" className="btn btn--ghost btn--down" onClick={onAnchor}>
+            {/* <a href="#brief" className="btn btn--ghost btn--down" onClick={onAnchor}>
               Build your brief <Arrow ch="↓" />
-            </a>
+            </a> */}
           </div>
         </div>
 
-        <dl className="hero__stats" data-hi>
-          <div><dt>Languages, originated</dt><dd>22<sup>+</sup></dd></div>
-          <div><dt>Idea to delivery</dt><dd>72<sup>hr</sup></dd></div>
-          <div><dt>Content formats</dt><dd>9</dd></div>
-          <div><dt>States &amp; UTs</dt><dd>36</dd></div>
-        </dl>
       </div>
     </section>
   );

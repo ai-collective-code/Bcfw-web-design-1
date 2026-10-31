@@ -20,5 +20,5 @@
 .mq__chip--lang b { font-family: var(--f-indic); font-weight: 700; font-size: 19px; line-height: 1.2; color: var(--ink); }
 .mq__chip--lang span { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); }
 .mq__chip--fmt { background: var(--ink); border-color: var(--ink); color: #fff; }
-.mq__chip--fmt i { font-style: normal; font-family: var(--f-mono); font-size: 11px; color: var(--lime); }
+.mq__chip--fmt i { font-style: normal; font-family: var(--f-mono); font-size: 11px; color: var(--pink); }
 .mq__chip--fmt b { font-family: var(--f-display); font-weight: 600; font-size: 17px; letter-spacing: -0.02em; }

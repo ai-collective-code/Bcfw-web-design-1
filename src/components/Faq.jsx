@@ -10,7 +10,7 @@ export default function Faq() {
     <section className="faq" id="faq" aria-labelledby="faq-title">
       <div className="shell faq__grid">
         <div className="faq__side">
-          <SectionHead id="faq-title" n="12" label="Questions" title="Before you *brief us.*" />
+          <SectionHead id="faq-title" n="11" label="Questions" title="Before you *brief us.*" />
           <p>Still deciding? Send us the market and the moment — we’ll tell you what we would make.</p>
           <a href={BRAND.contact} className="btn btn--ink" onClick={onAnchor}>Ask us anything <Arrow /></a>
         </div>

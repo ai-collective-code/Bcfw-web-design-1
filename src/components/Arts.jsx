@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SectionHead from './SectionHead.jsx';
 import { ARTS, wm } from '../data/content.js';
+import { prefersReducedMotion } from '../lib/motion.js';
 import './Arts.css';
 
 const N = ARTS.length;
@@ -21,8 +22,16 @@ export default function Arts() {
   const [active, setActive] = useState(0);
   const drag = useRef(null);
   const dragged = useRef(false); // swallow the click that ends a drag
-  const go = (d) => setActive((a) => (a + d + N) % N);
+  // Rotates on its own until the visitor takes over (button, drag, card click or arrow key).
+  const [auto, setAuto] = useState(() => !prefersReducedMotion());
+  const go = (d) => { setAuto(false); setActive((a) => (a + d + N) % N); };
   const art = ARTS[active];
+
+  useEffect(() => {
+    if (!auto) return undefined;
+    const id = setInterval(() => setActive((a) => (a + 1) % N), 2500);
+    return () => clearInterval(id);
+  }, [auto]);
 
   const down = (e) => { drag.current = { x: e.clientX }; dragged.current = false; };
   const up = (e) => {
@@ -39,7 +48,7 @@ export default function Arts() {
   return (
     <section className="arts" id="arts" aria-labelledby="arts-title">
       <div className="shell">
-        <SectionHead id="arts-title" n="11" label="Cultural codes" title="Borrow the codes, *not the clichés.*">
+        <SectionHead id="arts-title" n="10" label="Cultural codes" title="Borrow the codes, *not the clichés.*">
           Before a brand says anything, it has to look like it belongs. These are the forms and gestures an audience
           reads in a heartbeat — used with insider care, they make a campaign feel native in seconds.
         </SectionHead>
@@ -73,7 +82,7 @@ export default function Arts() {
               key={a.name}
               className={`cf__card ${o === 0 ? 'is-active' : ''}`}
               style={style}
-              onClick={() => { if (!dragged.current) setActive(i); }}
+              onClick={() => { if (!dragged.current) { setAuto(false); setActive(i); } }}
               tabIndex={-1}
               aria-label={`${a.name}, ${a.state}`}
               aria-current={o === 0}
@@ -84,7 +93,7 @@ export default function Arts() {
         })}
       </div>
 
-      <div className="shell cf__info" aria-live="polite">
+      <div className="shell cf__info" aria-live={auto ? 'off' : 'polite'}>
         <div className="cf__meta">
           <span className="tag"><b>{pad(active + 1)} / {pad(N)}</b> {art.state}</span>
           <h3 className="display">{art.name}</h3>

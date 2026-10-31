@@ -92,7 +92,7 @@ export default function Languages() {
       <div className="lang__frame on-night">
       <div className="shell lang__grid">
         <div className="lang__copy">
-          <SectionHead id="lang-title" n="09" label="Language" title="22+ languages. *Zero dubbing.*">
+          <SectionHead id="lang-title" n="08" label="Language" title="22+ languages. *Zero dubbing.*">
             Scripts are not fonts. We write, shoot and cut in the language first — then the brand finds its
             place inside it. Hover the sphere to meet each one.
           </SectionHead>

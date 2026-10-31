@@ -33,3 +33,5 @@
 @media (max-width: 900px) {
   .prob__grid { grid-template-columns: 1fr; }
 }
+
+.prob .display em { color: var(--pink); }

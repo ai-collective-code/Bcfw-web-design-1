@@ -16,7 +16,7 @@
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none;
   }
 }
 
@@ -173,8 +173,14 @@
 .nav__brand-mark .l-bar::before {
   content: ''; position: absolute; left: 50%; bottom: 100%;
   width: 1.5px; height: var(--thread); margin-left: -0.75px;
-  background: #0b0b1f; pointer-events: none;
+  background: #0b0b1f; /* BLACK on white background */
+  pointer-events: none;
+  transition: background-color 0.25s ease;
 }
+.nav__brand-mark.is-dark-bg .l-bar::before {
+  background: #ffffff; /* WHITE on black background */
+}
+
 /* Scroll nudge: a bigger swing to the left that settles back into the idle sway. */
 @keyframes bellKick {
   0%   { rotate: -7deg; }
@@ -197,9 +203,14 @@
   letter-spacing: -0.045em;
   padding: 0 0.1em 0.03em 0;
   align-self: end;
-  color: #0b0b1f;
+  color: #0b0b1f; /* BLACK on white background */
   line-height: 0.95;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease, text-shadow 0.25s ease;
+}
+/* When the background is black / dark */
+.nav__brand-mark.is-dark-bg .l-bharat {
+  color: #ffffff; /* WHITE on black background */
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
 }
 .nav__pill--brand:hover .nav__brand-mark .l-bharat {
   transform: translateX(1.5px);

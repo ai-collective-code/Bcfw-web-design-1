@@ -44,7 +44,7 @@
   border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--ink-2);
   background: transparent; transition: all 0.25s var(--ease-out); cursor: pointer;
 }
-.qu__tab-btn:hover:not(:disabled) { color: var(--ink); background: rgba(255, 255, 255, 0.55); }
+.qu__tab-btn:hover { color: var(--ink); background: rgba(255, 255, 255, 0.55); }
 .qu__tab-btn.is-active {
   background: #fff; color: #9c4378; font-weight: 600;
   box-shadow: 0 2px 8px rgba(156, 67, 120, 0.15), 0 1px 2px rgba(11, 11, 31, 0.06);
@@ -151,6 +151,18 @@
 .qu__official b { font-weight: 400; }
 
 .qu__row.is-editing { box-shadow: 0 0 0 1.5px rgba(156, 67, 120, 0.45), 0 16px 40px -20px rgba(156, 67, 120, 0.45); }
+.qu__story { grid-column: 1 / -1; display: grid; gap: 8px; }
+.qu__desc-input {
+  width: 100%; padding: 12px 18px; border-radius: 18px; border: 1px solid transparent;
+  background: rgba(11, 11, 31, 0.05); font: inherit; font-size: 14.5px; color: var(--ink);
+  resize: vertical; min-height: 64px; line-height: 1.45;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+.qu__desc-input::placeholder { color: var(--ink-3); }
+.qu__desc-input:focus {
+  outline: none; background: #fff; border-color: rgba(156, 67, 120, 0.5); box-shadow: 0 0 0 4px rgba(156, 67, 120, 0.14);
+}
+.qu__item-catchy { font-weight: 600; color: #9c4378; font-size: 13.5px; line-height: 1.25; }
 .qu__time { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .qu__time-label { grid-column: 1 / -1; font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-2); }
 .qu__time label { display: grid; gap: 4px; }
@@ -199,8 +211,52 @@
   display: grid; place-items: center; color: #e0307f; border: 1px solid rgba(224, 48, 127, 0.2);
 }
 
+/* Problem section headline editor & preview */
+.qu__field-col { display: grid; gap: 4px; }
+.qu__field-sub {
+  padding-left: 14px; font-family: var(--f-mono); font-size: 11px;
+  color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.03em;
+}
+.qu__headline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qu__headline-preview {
+  display: flex; flex-direction: column; gap: 4px; padding: 10px 14px; border-radius: 14px;
+  background: rgba(156, 67, 120, 0.05); border: 1px dashed rgba(156, 67, 120, 0.3);
+}
+.qu__preview-label {
+  font-family: var(--f-mono); font-size: 11px; color: #9c4378; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.qu__preview-display { font-size: 16px; color: var(--ink); line-height: 1.3; }
+.qu__preview-display strong { font-weight: 700; }
+.qu__preview-display em {
+  font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--pink); margin-left: 4px;
+}
+
+.qu__item-headline { font-size: 12.5px; color: var(--ink-2); }
+.qu__item-headline strong { font-weight: 600; }
+.qu__item-headline em {
+  font-family: var(--font-serif); font-style: italic; color: var(--pink); margin-left: 3px;
+}
+
+.qu__headline-card {
+  padding: 14px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 0 1px rgba(11, 11, 31, 0.06); margin-bottom: 12px; display: grid; gap: 8px;
+  animation: quPop 0.3s var(--ease-out) both;
+}
+.qu__headline-card-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.qu__headline-card-btns { display: flex; gap: 6px; }
+.qu__headline-card-preview { font-size: 16.5px; color: var(--ink); line-height: 1.35; }
+.qu__headline-card-preview strong { font-weight: 700; }
+.qu__headline-card-preview em {
+  font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--pink); margin-left: 4px;
+}
+.qu__headline-card-form { display: grid; gap: 8px; }
+.qu__chip.is-save { background: #111127; color: #fff; }
+.qu__chip.is-save:hover { background: #281a38; }
+
 @media (max-width: 560px) {
   .qu__time { grid-template-columns: 1fr; }
+  .qu__headline-grid { grid-template-columns: 1fr; }
   .qu__item { grid-template-columns: 56px 1fr; }
   .qu__item > img { width: 56px; height: 56px; }
   .qu__item-actions { grid-column: 1 / -1; justify-content: flex-end; }

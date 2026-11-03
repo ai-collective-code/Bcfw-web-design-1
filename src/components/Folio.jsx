@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
-import { gsap, useGSAP, prefersReducedMotion, onAnchor } from '../lib/motion.js';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { gsap, useGSAP, prefersReducedMotion, onAnchor, lockScroll } from '../lib/motion.js';
 import { BRAND } from '../data/content.js';
 import {
-  FOUNDER, DIVIDERS, CLIENTS, CITATION, PRESS, WORK, ytThumb, ytEmbed,
+  FOUNDER, DIVIDERS, CLIENTS, WORK, ytThumb, ytEmbed, instaEmbed,
 } from '../data/folio.js';
 import { useRewards } from '../lib/quickUpdate.js';
 import { Arrow } from './ui.jsx';
@@ -68,26 +69,36 @@ function Divider({ k }) {
   );
 }
 
-/** YouTube thumbnail until clicked, so ninety films cost ninety small JPEGs rather than ninety players. */
-function Film({ v }) {
-  const [playing, setPlaying] = useState(false);
+/** YouTube thumbnail card that opens the full video in a lightbox modal popup. */
+function Film({ v, onPlay }) {
   const label = `${v.brand} — ${v.title}`;
   return (
-    <figure className="film">
+    <figure
+      className="film"
+      onClick={() => onPlay?.(v)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onPlay?.(v);
+        }
+      }}
+      aria-label={`Play: ${label}`}
+    >
       <div className="film__frame">
-        {playing ? (
-          <iframe
-            src={ytEmbed(v.id)}
-            title={label}
-            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-            allowFullScreen
-          />
-        ) : (
-          <button className="film__play" onClick={() => setPlaying(true)} aria-label={`Play: ${label}`}>
-            <img src={ytThumb(v.id)} alt="" loading="lazy" decoding="async" />
-            <span className="film__btn" aria-hidden="true" />
-          </button>
-        )}
+        <button
+          type="button"
+          className="film__play"
+          onClick={(e) => {
+            e.stopPropagation();
+            onPlay?.(v);
+          }}
+          aria-label={`Play: ${label}`}
+        >
+          <img src={ytThumb(v.id)} alt="" loading="lazy" decoding="async" />
+          <span className="film__btn" aria-hidden="true" />
+        </button>
       </div>
       <figcaption>
         <span className="mono">{v.brand}</span>
@@ -97,7 +108,7 @@ function Film({ v }) {
   );
 }
 
-function Reel({ group }) {
+function Reel({ group, onPlayVideo }) {
   const [all, setAll] = useState(false);
   const { videos, feature, reels } = group;
   const list = all ? videos : videos.slice(0, SHOWN);
@@ -106,7 +117,7 @@ function Reel({ group }) {
     <div className="fslide fwork">
       {feature && (
         <div className="fwork__feature">
-          <Film v={feature} />
+          <Film v={feature} onPlay={onPlayVideo} />
           <div className="fwork__story">
             <p className="fwork__lead">{feature.lead}</p>
             <p>{feature.body}</p>
@@ -117,17 +128,31 @@ function Reel({ group }) {
         <ul className="fwork__reels">
           {reels.map((r) => (
             <li key={r.url}>
-              <a href={r.url} target="_blank" rel="noreferrer">
+              <button
+                type="button"
+                className="fwork__reel-btn"
+                onClick={() => onPlayVideo?.({
+                  type: 'reel',
+                  brand: r.brand,
+                  title: r.title,
+                  url: r.url,
+                })}
+                aria-label={`Play reel: ${r.brand} — ${r.title}`}
+              >
                 <span className="mono">{r.brand} · Instagram reel</span>
                 <b>{r.title}</b>
-                <span className="fwork__go" aria-hidden="true">↗</span>
-              </a>
+                <span className="fwork__go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+              </button>
             </li>
           ))}
         </ul>
       )}
       <div className="fwork__grid">
-        {list.map((v) => <Film v={v} key={v.id} />)}
+        {list.map((v) => <Film v={v} key={v.id} onPlay={onPlayVideo} />)}
       </div>
       {videos.length > SHOWN && (
         <button className="fwork__more" onClick={() => setAll((x) => !x)} aria-expanded={all}>
@@ -144,6 +169,23 @@ function Reel({ group }) {
 export default function Folio() {
   const root = useRef(null);
   const rewards = useRewards();
+  const [activeVideo, setActiveVideo] = useState(null);
+  const aiGroup = WORK.find((g) => g.key === 'ai');
+  const otherWork = WORK.filter((g) => g.key !== 'ai');
+
+  // Handle scroll lock & keyboard Escape when video popup is open
+  useEffect(() => {
+    if (!activeVideo) return undefined;
+    lockScroll(true);
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setActiveVideo(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      lockScroll(false);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [activeVideo]);
 
   useGSAP(() => {
     if (prefersReducedMotion()) return;
@@ -323,6 +365,13 @@ export default function Folio() {
           </ul>
         </div>
 
+        {aiGroup && (
+          <div className="folio__group" key={aiGroup.key}>
+            <Divider k={aiGroup.key} />
+            <Reel group={aiGroup} onPlayVideo={setActiveVideo} />
+          </div>
+        )}
+
         <Divider k="awards" />
         <div className="fslide fawards" data-reveal>
           <div className="fawards__top">
@@ -330,15 +379,6 @@ export default function Folio() {
               <p className="mono">Recognition</p>
               <h3><b>{rewards.length}</b> award platforms have honoured our team’s work</h3>
             </div>
-            <aside className="fawards__cite">
-              <span className="fawards__medal"><Laurel />{CITATION.medal}</span>
-              <div>
-                <p className="mono">{CITATION.award}</p>
-                <h4>{CITATION.campaign}</h4>
-                <p>{CITATION.brand} · {CITATION.category}</p>
-                <p className="mono fawards__agency">Agency: {CITATION.agency}</p>
-              </div>
-            </aside>
           </div>
           <ol className="fawards__list">
             {rewards.map((a, i) => (
@@ -358,31 +398,10 @@ export default function Folio() {
           <Mark at="bottom" />
         </div>
 
-        <div className="fslide fpress" data-reveal>
-          <div className="fpress__head">
-            <div>
-              <p className="mono">In the press</p>
-              <h3>The work, as the trade press covered it</h3>
-            </div>
-            <p className="fpress__outlets">{[...new Set(PRESS.map((p) => p.outlet))].join(' · ')}</p>
-          </div>
-          <ul className="fpress__grid">
-            {PRESS.map((p) => (
-              <li key={p.url}>
-                <a href={p.url} target="_blank" rel="noreferrer">
-                  <span className="mono">{p.outlet}</span>
-                  <b>{p.head}</b>
-                  <span className="fpress__read">Read article <i aria-hidden="true">↗</i></span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {WORK.map((g) => (
+        {otherWork.map((g) => (
           <div className="folio__group" key={g.key}>
             <Divider k={g.key} />
-            <Reel group={g} />
+            <Reel group={g} onPlayVideo={setActiveVideo} />
           </div>
         ))}
 
@@ -410,6 +429,80 @@ export default function Folio() {
           <p className="fcoffee__note">**Bharat Content Fireworks is a part of AI Collective Private Limited.</p>
         </div>
       </div>
+
+      {/* Video Lightbox Modal Popup */}
+      {activeVideo && typeof document !== 'undefined' && createPortal(
+        <div
+          className={`video-modal ${activeVideo.type === 'reel' ? 'video-modal--reel' : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="video-modal-title"
+          onClick={() => setActiveVideo(null)}
+        >
+          <div className="video-modal__backdrop" aria-hidden="true" />
+          <div
+            className={`video-modal__content ${activeVideo.type === 'reel' ? 'video-modal__content--reel' : ''}`}
+            data-lenis-prevent
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="video-modal__bar">
+              <div className="video-modal__titles">
+                <span className="mono video-modal__brand">
+                  {activeVideo.brand}
+                  {activeVideo.type === 'reel' && ' · Instagram Reel'}
+                </span>
+                <h3 id="video-modal-title" className="video-modal__heading">{activeVideo.title}</h3>
+              </div>
+              <div className="video-modal__actions">
+                {activeVideo.type === 'reel' && activeVideo.url && (
+                  <a
+                    href={activeVideo.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="video-modal__link"
+                    title="Open on Instagram"
+                    aria-label="Open on Instagram (opens in new tab)"
+                  >
+                    <span>Instagram</span>
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+                <button
+                  type="button"
+                  className="video-modal__close"
+                  onClick={() => setActiveVideo(null)}
+                  aria-label="Close video"
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className={`video-modal__player ${activeVideo.type === 'reel' ? 'video-modal__player--reel' : ''}`}>
+              {activeVideo.type === 'reel' ? (
+                <iframe
+                  src={instaEmbed(activeVideo.url)}
+                  title={`${activeVideo.brand} — ${activeVideo.title}`}
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                  allowFullScreen
+                  scrolling="no"
+                />
+              ) : (
+                <iframe
+                  src={ytEmbed(activeVideo.id)}
+                  title={`${activeVideo.brand} — ${activeVideo.title}`}
+                  allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                  allowFullScreen
+                />
+              )}
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
     </section>
   );
 }

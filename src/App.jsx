@@ -16,6 +16,7 @@ import Languages from './components/Languages.jsx';
 import Atlas from './components/Atlas.jsx';
 import Arts from './components/Arts.jsx';
 import Faq from './components/Faq.jsx';
+import Press from './components/Press.jsx';
 import Finale from './components/Finale.jsx';
 import StickyCta from './components/StickyCta.jsx';
 
@@ -92,6 +93,7 @@ export default function App() {
         <Atlas />
         <Arts />
         <Faq />
+        <Press />
       </main>
       <Finale />
       <StickyCta />

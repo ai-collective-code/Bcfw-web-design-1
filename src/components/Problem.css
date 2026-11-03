@@ -1,20 +1,45 @@
 .prob { padding: clamp(100px, 12vw, 170px) 0 clamp(80px, 10vw, 140px); }
 
-.prob__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.prob__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 1.6vw, 24px); align-items: start; }
 .pain {
-  display: grid; gap: 12px; align-content: start; padding: 10px 10px 26px; border-radius: var(--radius);
+  display: grid; align-content: start; overflow: hidden; border-radius: 28px;
   background: var(--surface); border: 1px solid var(--line);
+  box-shadow: 0 18px 40px -26px rgba(255, 48, 159, 0.35);
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
 }
-.pain__img { position: relative; height: 200px; border-radius: 24px; overflow: hidden; background: var(--surface-2); margin-bottom: 8px; }
-.pain__img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(0.9) brightness(0.9); transition: filter 0.8s var(--ease-out), transform 1.2s var(--ease-out); }
-.pain:hover .pain__img img { filter: grayscale(0.6); transform: scale(1.04); }
-.pain__x {
-  position: absolute; right: 12px; top: 12px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
-  background: var(--pink); color: #fff; font-size: 16px; font-weight: 700;
+.pain:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -28px rgba(255, 48, 159, 0.5); }
+.pain__img { position: relative; height: clamp(240px, 22vw, 300px); overflow: hidden; background: var(--surface-2); }
+.pain__img::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 11, 31, 0.28) 0%, transparent 38%, rgba(11, 11, 31, 0.32) 100%);
 }
-.pain .mono { padding: 0 14px; color: var(--pink); }
-.pain h3 { margin: 0; padding: 0 14px; font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 2.5vw, 38px); letter-spacing: -0.045em; line-height: 1; }
-.pain p { margin: 0; padding: 0 14px; color: var(--ink-2); font-size: 16.5px; }
+.pain__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); }
+.pain:hover .pain__img img { transform: scale(1.06); }
+.pain__badge {
+  position: absolute; z-index: 1; top: 14px; left: 14px; display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px 7px 11px; border-radius: 999px; color: #fff;
+  font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.pain__badge i { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); }
+.pain__body { display: grid; gap: 12px; padding: 22px 24px 26px; }
+.pain h3 {
+  margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(26px, 2.2vw, 34px);
+  letter-spacing: -0.045em; line-height: 1.02;
+}
+.pain h3::after { content: ''; display: block; width: 44px; height: 4px; margin-top: 14px; border-radius: 4px; background: var(--pink); }
+.pain p {
+  margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden;
+}
+.pain.is-open p { -webkit-line-clamp: unset; line-clamp: unset; display: block; }
+.pain__more {
+  justify-self: start; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--ink); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+.pain__more:hover { background: var(--pink); border-color: var(--pink); color: #fff; }
 
 .fix { margin-top: clamp(80px, 9vw, 130px); display: grid; gap: 30px; }
 .fix .tag::before { background: var(--lime); box-shadow: 0 0 0 4px rgba(198, 244, 50, 0.35); }

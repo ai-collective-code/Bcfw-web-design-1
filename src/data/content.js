@@ -1,5 +1,13 @@
 import { FESTIVALS } from './festivals.js';
 import { CULTURE_IMAGES } from './cultureImages.js';
+import nuvoco01 from '../assets/Nuvoco/N_01.png';
+import nuvoco02 from '../assets/Nuvoco/N-02.png';
+import nuvoco03 from '../assets/Nuvoco/N-03.png';
+import lalTail1 from '../assets/Lal_tail_Mothers day/L_1.png';
+import lalTail4 from '../assets/Lal_tail_Mothers day/L_4.png';
+import lalTail2 from '../assets/Lal_tail_Mothers day/L-2.png';
+import lalTail3 from '../assets/Lal_tail_Mothers day/L-3.png';
+import lalTail5 from '../assets/Lal_tail_Mothers day/L-5.png';
 
 /** Wikimedia Commons thumbnail. 500 and 960 are standard steps the CDN keeps warm. */
 export const wm = (file, w = 960) => `https://commons.wikimedia.org/wiki/Special:FilePath/${file}?width=${w}`;
@@ -66,8 +74,7 @@ export const langOf = (state) => STATE_LANG[state] ?? null;
 const ALL_PRODUCTION = Object.entries(
   import.meta.glob('../assets/production_images/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' })
 ).map(([path, src]) => ({ id: path, src }));
-
-// Dedicated 5 images for the 3rd slide exclusively (S_1, S_2, S_3, S_4, S-5)
+// Dedicated 5 images for the 4th slide exclusively (S_1, S_2, S_3, S_4, S-5)
 const getFilename = (id) => id.split('/').pop().split('\\').pop().toLowerCase();
 const S_FILENAMES = ['s_1.jpeg', 's_2.jpeg', 's_3.jpeg', 's_4.jpeg', 's-5.jpeg'];
 
@@ -75,7 +82,42 @@ export const S_IMAGES = S_FILENAMES.map((name) =>
   ALL_PRODUCTION.find((p) => getFilename(p.id) === name)
 ).filter(Boolean);
 
-// All other production stills strictly exclude S_1 through S-5 and any Ganguly shoot stills
+// Dedicated MYK Reels media for the 1st slide exclusively (every image and video in assets/MYK_Reels)
+export const MYK_REELS_MEDIA = Object.entries(
+  import.meta.glob('../assets/MYK_Reels/*.{jpg,jpeg,png,webp,mp4,webm}', { eager: true, import: 'default' })
+).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([path, src]) => ({ id: getFilename(path), src, type: /\.(mp4|webm)$/i.test(path) ? 'video' : 'image' }));
+
+// Dedicated Odomos images for the 2nd slide exclusively (everything in assets/Odomos)
+export const ODOMOS_IMAGES = Object.entries(
+  import.meta.glob('../assets/Odomos/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' })
+).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([path, src]) => ({ id: getFilename(path), src }));
+
+// Dedicated Red Paste images for the 3rd slide exclusively (everything in assets/Red_paste)
+export const RED_PASTE_IMAGES = Object.entries(
+  import.meta.glob('../assets/Red_paste/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' })
+).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  .map(([path, src]) => ({ id: getFilename(path), src }));
+
+// Dedicated Nuvoco images for the 6th slide exclusively (N_01, N-02, N-03)
+export const NUVOCO_IMAGES = [
+  { id: 'N_01.png', src: nuvoco01 },
+  { id: 'N-02.png', src: nuvoco02 },
+  { id: 'N-03.png', src: nuvoco03 },
+];
+
+// Dedicated 5 images for the 5th slide exclusively (L_1, L_4, L-2, L-3, L-5)
+export const LAL_TAIL_IMAGES = [
+  { id: 'L_1.png', src: lalTail1 },
+  { id: 'L_4.png', src: lalTail4 },
+  { id: 'L-2.png', src: lalTail2 },
+  { id: 'L-3.png', src: lalTail3 },
+  { id: 'L-5.png', src: lalTail5 },
+];
+
+// All other production stills strictly exclude S_1 through S-5, Ganguly shoot stills,
+// Nuvoco images, and Lal Tail images so that none of these appear in the other slides.
 const isExcludedFromOtherSlides = (id) => {
   const fn = getFilename(id);
   return (
@@ -86,7 +128,15 @@ const isExcludedFromOtherSlides = (id) => {
     fn === 's-5.jpeg' ||
     fn.startsWith('s_') ||
     fn.startsWith('s-') ||
-    fn.includes('11.11.34')
+    fn.includes('11.11.34') ||
+    fn.includes('nuvoco') ||
+    fn.includes('11.36.16') ||
+    fn.includes('11.36.17') ||
+    fn.startsWith('n_') ||
+    fn.startsWith('n-') ||
+    fn.startsWith('l_') ||
+    fn.startsWith('l-') ||
+    fn.includes('lal_tail')
   );
 };
 
@@ -95,18 +145,44 @@ const OTHER_IMAGES = ALL_PRODUCTION.filter(
 );
 
 export const HERO_WALL = Array.from({ length: 6 }, (_, c) => {
-  // Swapped: The 4th slide (c === 3) is now populated exclusively by S_1 through S-5
+  // Slide 1 (c === 0) is populated exclusively by the MYK_Reels images and videos
+  if (c === 0) {
+    return MYK_REELS_MEDIA;
+  }
+  // Slide 2 (c === 1) is populated exclusively by the Odomos images
+  if (c === 1) {
+    return ODOMOS_IMAGES;
+  }
+  // Slide 3 (c === 2) is populated exclusively by the Red_paste images
+  if (c === 2) {
+    return RED_PASTE_IMAGES;
+  }
+  // Slide 4 (c === 3) is populated exclusively by S_1 through S-5
   if (c === 3) {
     return S_IMAGES;
   }
-  // Slides 1, 2, 3, 5, 6 use only the other production images
-  const otherC = c < 3 ? c : c - 1;
+  // Slide 5 (c === 4) is populated exclusively by Lal Tail Mother's Day images (L_1, L_4, L-2, L-3, L-5)
+  if (c === 4) {
+    return LAL_TAIL_IMAGES;
+  }
+  // Slide 6 (c === 5, last slide) is populated exclusively by Nuvoco images (N_01, N-02, N-03)
+  if (c === 5) {
+    return [
+      NUVOCO_IMAGES[0],
+      NUVOCO_IMAGES[1],
+      NUVOCO_IMAGES[2],
+      NUVOCO_IMAGES[0],
+      NUVOCO_IMAGES[1],
+      NUVOCO_IMAGES[2],
+    ];
+  }
+  // Slide 1 (index 0) uses only the other production images
   return Array.from({ length: 5 }, (_, i) =>
-    OTHER_IMAGES[(otherC * 5 + i) % OTHER_IMAGES.length]
+    OTHER_IMAGES[(c * 5 + i) % OTHER_IMAGES.length]
   );
 });
 // Photographs the preloader warms up (the first screenful of the wall).
-export const HERO_PRELOAD = HERO_WALL.flatMap((col) => col.slice(0, 4));
+export const HERO_PRELOAD = HERO_WALL.flatMap((col) => col.slice(0, 4)).filter((f) => f.type !== 'video');
 
 /*
  * "One brief, thirteen markets": a campaign travelling Kashmir → Kanyakumari,

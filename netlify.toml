@@ -4,6 +4,9 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # GMAIL_USER is the team's public inbox address, which also appears in the code and README as the
+  # default recipient, so it isn't a secret. GMAIL_APP_PASSWORD is still scanned for.
+  SECRETS_SCAN_OMIT_KEYS = "GMAIL_USER"
 
 [functions]
   node_bundler = "esbuild"

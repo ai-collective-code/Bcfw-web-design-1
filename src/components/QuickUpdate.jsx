@@ -4,6 +4,7 @@ import { lockScroll } from '../lib/motion.js';
 import {
   QUICK_CODE, MAX_EVENTS, useEvents, saveEvents, shrinkImage, eventStatus,
   useRewards, saveRewards, DEFAULT_REWARDS, resetRewards,
+  useDefaultProblemHeadline, saveProblemHeadline, resetProblemHeadline,
 } from '../lib/quickUpdate.js';
 import { INDIA_LANGUAGES } from '../data/content.js';
 import './QuickUpdate.css';
@@ -72,7 +73,18 @@ const localNow = () => {
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset(), 0, 0);
   return d.toISOString().slice(0, 16);
 };
-const blank = () => ({ format: '', language: '', moment: '', image: '', start: localNow(), end: '' });
+const blank = () => ({
+  format: '',
+  language: '',
+  moment: '',
+  catchyLine: '',
+  description: '',
+  headlineFirst: '',
+  headlineSecond: '',
+  image: '',
+  start: localNow(),
+  end: '',
+});
 
 const missing = (r) => {
   const out = [];
@@ -99,6 +111,7 @@ const blankReward = () => ({ id: `rew-${Date.now()}`, name: '', image: '' });
 export default function QuickUpdate() {
   const saved = useEvents();
   const savedRewards = useRewards();
+  const defaultHeadline = useDefaultProblemHeadline();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState('code');
   const [tab, setTab] = useState('events'); // 'events' | 'rewards'
@@ -111,6 +124,10 @@ export default function QuickUpdate() {
   const [draft, setDraft] = useState(null); // its working copy
   const [isNew, setIsNew] = useState(false);
   const [confirmDel, setConfirmDel] = useState(null);
+
+  // Default headline state
+  const [editingHeadline, setEditingHeadline] = useState(false);
+  const [headlineDraft, setHeadlineDraft] = useState({ line1: '', line2: '' });
 
   // Rewards state
   const [rewardRows, setRewardRows] = useState([]);
@@ -129,7 +146,15 @@ export default function QuickUpdate() {
 
   useEffect(() => {
     if (editing === null) {
-      setRows(saved.map((r) => ({ start: '', end: '', ...r })));
+      setRows(saved.map((r) => ({
+        start: '',
+        end: '',
+        catchyLine: '',
+        description: '',
+        headlineFirst: '',
+        headlineSecond: '',
+        ...r,
+      })));
     }
   }, [saved, editing]);
 
@@ -149,17 +174,55 @@ export default function QuickUpdate() {
 
   const startEdit = (list, i, fresh) => {
     setEditing(i);
-    setDraft({ ...list[i] });
+    setDraft({
+      catchyLine: '',
+      description: '',
+      headlineFirst: '',
+      headlineSecond: '',
+      ...list[i],
+    });
     setIsNew(fresh);
     setConfirmDel(null);
     setError('');
   };
 
+  const switchTab = (nextTab) => {
+    if (tab === nextTab) return;
+    setError('');
+
+    // If an untouched blank new event was open, clean it up
+    if (tab === 'events' && isNew && draft && !draft.format?.trim() && !draft.language && !draft.moment?.trim() && !draft.image) {
+      setRows((rs) => rs.filter((_, j) => j !== editing));
+      setEditing(null);
+      setDraft(null);
+      setIsNew(false);
+    }
+    // If an untouched blank new reward was open, clean it up
+    if (tab === 'rewards' && isNewReward && rewardDraft && !rewardDraft.name?.trim() && !rewardDraft.image) {
+      setRewardRows((rs) => rs.filter((_, j) => j !== rewardEditing));
+      setRewardEditing(null);
+      setRewardDraft(null);
+      setIsNewReward(false);
+    }
+
+    setTab(nextTab);
+  };
+
   const unlock = (e) => {
     e.preventDefault();
     if (code.trim() !== QUICK_CODE) { setError('Wrong code. Try again.'); return; }
-    const list = saved.map((r) => ({ start: '', end: '', ...r }));
-    if (list.length) { setRows(list); setEditing(null); setDraft(null); } else { const b = [blank()]; setRows(b); startEdit(b, 0, true); }
+    const list = saved.map((r) => ({
+      start: '',
+      end: '',
+      catchyLine: '',
+      description: '',
+      headlineFirst: '',
+      headlineSecond: '',
+      ...r,
+    }));
+    setRows(list);
+    setEditing(null);
+    setDraft(null);
     setRewardRows(savedRewards);
     setRewardEditing(null);
     setRewardDraft(null);
@@ -205,7 +268,11 @@ export default function QuickUpdate() {
     startEdit(next, next.length - 1, true);
   };
 
-  const reset = () => { saveEvents([]); setOpen(false); };
+  const reset = () => {
+    saveEvents([]);
+    resetProblemHeadline();
+    setOpen(false);
+  };
 
   // Reward handlers
   const startEditReward = (list, i, fresh) => {
@@ -276,9 +343,20 @@ export default function QuickUpdate() {
 
   const finish = (e) => {
     e.preventDefault();
-    if (editing !== null || rewardEditing !== null) return;
-    saveEvents(rows);
-    saveRewards(rewardRows);
+    if (tab === 'events' && editing !== null) return;
+    if (tab === 'rewards' && rewardEditing !== null) return;
+
+    let finalRows = rows;
+    if (editing !== null && isNew && draft && missing(draft).length > 0) {
+      finalRows = rows.filter((_, j) => j !== editing);
+    }
+    let finalRewards = rewardRows;
+    if (rewardEditing !== null && isNewReward && (!rewardDraft || !rewardDraft.name?.trim())) {
+      finalRewards = rewardRows.filter((_, j) => j !== rewardEditing);
+    }
+
+    saveEvents(finalRows.filter((r) => !missing(r).length));
+    saveRewards(finalRewards.filter((r) => r.name?.trim()));
     setOpen(false);
   };
 
@@ -333,9 +411,7 @@ export default function QuickUpdate() {
                       role="tab"
                       aria-selected={tab === 'events'}
                       className={`qu__tab-btn ${tab === 'events' ? 'is-active' : ''}`}
-                      disabled={editing !== null || rewardEditing !== null}
-                      title={editing !== null || rewardEditing !== null ? 'Save or discard the current item first' : undefined}
-                      onClick={() => { setTab('events'); setError(''); }}
+                      onClick={() => switchTab('events')}
                     >
                       <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true">
                         <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
@@ -347,9 +423,7 @@ export default function QuickUpdate() {
                       role="tab"
                       aria-selected={tab === 'rewards'}
                       className={`qu__tab-btn ${tab === 'rewards' ? 'is-active' : ''}`}
-                      disabled={editing !== null || rewardEditing !== null}
-                      title={editing !== null || rewardEditing !== null ? 'Save or discard the current item first' : undefined}
-                      onClick={() => { setTab('rewards'); setError(''); }}
+                      onClick={() => switchTab('rewards')}
                     >
                       <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -364,8 +438,82 @@ export default function QuickUpdate() {
                     <h2 id="qu-title">Events</h2>
                     <p>
                       Up to {MAX_EVENTS} events, added one at a time. Each shows on the site only during its timeline —
-                      text on the hero tags, photo on the problem cards in order.
+                      text on the hero tags; photo, catchy line, and short description on the problem cards in order.
                     </p>
+
+                    {editing === null && (
+                      <div className="qu__headline-card">
+                        <div className="qu__headline-card-header">
+                          <span className="qu__time-label">Default Problem Headline</span>
+                          {!editingHeadline ? (
+                            <button
+                              type="button"
+                              className="qu__chip"
+                              onClick={() => {
+                                setEditingHeadline(true);
+                                setHeadlineDraft({ line1: defaultHeadline.line1, line2: defaultHeadline.line2 });
+                              }}
+                            >
+                              Edit headline
+                            </button>
+                          ) : (
+                            <div className="qu__headline-card-btns">
+                              <button
+                                type="button"
+                                className="qu__chip"
+                                onClick={() => setEditingHeadline(false)}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="button"
+                                className="qu__chip is-save"
+                                onClick={() => {
+                                  saveProblemHeadline(headlineDraft);
+                                  setEditingHeadline(false);
+                                }}
+                              >
+                                Save
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        {!editingHeadline ? (
+                          <div className="qu__headline-card-preview">
+                            <strong>{defaultHeadline.line1} </strong>
+                            <em>{defaultHeadline.line2}</em>
+                          </div>
+                        ) : (
+                          <div className="qu__headline-card-form">
+                            <div className="qu__headline-grid">
+                              <label className="qu__field-col">
+                                <span className="qu__field-sub">First line (Bold)</span>
+                                <input
+                                  value={headlineDraft.line1}
+                                  placeholder="Made in Mumbai."
+                                  onChange={(e) => setHeadlineDraft((d) => ({ ...d, line1: e.target.value }))}
+                                />
+                              </label>
+                              <label className="qu__field-col">
+                                <span className="qu__field-sub">Second line (Italic pink)</span>
+                                <input
+                                  value={headlineDraft.line2}
+                                  placeholder="Dies in Madurai."
+                                  onChange={(e) => setHeadlineDraft((d) => ({ ...d, line2: e.target.value }))}
+                                />
+                              </label>
+                            </div>
+                            <div className="qu__headline-preview">
+                              <span className="qu__preview-label">Live site preview:</span>
+                              <span className="qu__preview-display">
+                                <strong>{headlineDraft.line1.trim() || 'Made in Mumbai.'} </strong>
+                                <em>{headlineDraft.line2.trim() || 'Dies in Madurai.'}</em>
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {rows.map((r, i) => (editing === i ? (
                       <fieldset key={i} className="qu__row is-editing">
@@ -379,6 +527,51 @@ export default function QuickUpdate() {
                           {draft.image ? <img src={draft.image} alt="" /> : <span><b>＋</b>Add image</span>}
                           <input type="file" accept="image/*" onChange={(e) => pick(e.target.files[0])} />
                         </label>
+
+                        <div className="qu__story">
+                          <span className="qu__time-label">Problem card: Catchy Line &amp; Short Description</span>
+                          <input
+                            value={draft.catchyLine || ''}
+                            placeholder="Catchy Line (e.g. Dubbed, not made)"
+                            onChange={(e) => set('catchyLine', e.target.value)}
+                          />
+                          <textarea
+                            className="qu__desc-input"
+                            value={draft.description || ''}
+                            placeholder="Short description (e.g. One Hindi master, dubbed twelve ways. Audiences can tell in a second when a brand is talking at them instead of to them.)"
+                            rows={2}
+                            onChange={(e) => set('description', e.target.value)}
+                          />
+                        </div>
+
+                        <div className="qu__story">
+                          <span className="qu__time-label">Problem section: Headline (e.g. Made in Mumbai. Dies in Madurai.)</span>
+                          <div className="qu__headline-grid">
+                            <label className="qu__field-col">
+                              <span className="qu__field-sub">First line (Bold)</span>
+                              <input
+                                value={draft.headlineFirst || ''}
+                                placeholder="First line (e.g. Made in Mumbai.)"
+                                onChange={(e) => set('headlineFirst', e.target.value)}
+                              />
+                            </label>
+                            <label className="qu__field-col">
+                              <span className="qu__field-sub">Second line (Italic pink)</span>
+                              <input
+                                value={draft.headlineSecond || ''}
+                                placeholder="Second line (e.g. Dies in Madurai.)"
+                                onChange={(e) => set('headlineSecond', e.target.value)}
+                              />
+                            </label>
+                          </div>
+                          <div className="qu__headline-preview">
+                            <span className="qu__preview-label">Live headline preview:</span>
+                            <span className="qu__preview-display">
+                              <strong>{draft.headlineFirst?.trim() || defaultHeadline.line1} </strong>
+                              <em>{draft.headlineSecond?.trim() || defaultHeadline.line2}</em>
+                            </span>
+                          </div>
+                        </div>
 
                         <div className="qu__time">
                           <span className="qu__time-label">Timeline: how long this event stays on the site</span>
@@ -408,6 +601,13 @@ export default function QuickUpdate() {
                           <span className={`qu__status is-${eventStatus(r)}`}>{STATUS[eventStatus(r)]}</span>
                           <strong>{r.format} · {r.language}</strong>
                           <span>{r.moment}</span>
+                          {r.catchyLine && <span className="qu__item-catchy">“{r.catchyLine}”</span>}
+                          {(r.headlineFirst || r.headlineSecond) && (
+                            <span className="qu__item-headline">
+                              Title: <strong>{r.headlineFirst || defaultHeadline.line1} </strong>
+                              <em>{r.headlineSecond || defaultHeadline.line2}</em>
+                            </span>
+                          )}
                           <small>{when(r.start)} → {when(r.end)}</small>
                         </div>
                         <div className="qu__item-actions">

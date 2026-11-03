@@ -18,7 +18,7 @@ export default function SectionHead({ id, n, label, title, children, className =
       stagger: 0.045,
       scrollTrigger: { trigger: root.current, start: 'top 82%', once: true },
     });
-  }, { scope: root });
+  }, { dependencies: [title], scope: root });
 
   return (
     <header className={`sec-head ${className}`} ref={root}>

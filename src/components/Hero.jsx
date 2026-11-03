@@ -8,6 +8,8 @@ import './Hero.css';
 // 3D background photo wall with updated slide order
 const TILT = { rotateX: 26, rotateZ: -15 };
 const TILT_MOBILE = { rotateX: 8, rotateZ: -6 };
+// 6 columns x 220px + 5 gaps x 22px = 1430px, plus room for the tilt and depth magnification.
+const WALL_FIT_WIDTH = 1500;
 
 /*
  * A wall of festival photographs laid on a tilted plane. Columns sit at two
@@ -27,6 +29,10 @@ export default function Hero({ ready }) {
     const getTilt = () => (window.innerWidth <= 1000 ? TILT_MOBILE : TILT);
     const applyTilt = () => {
       gsap.set(tilt.current, getTilt());
+      // Narrow screens: shrink the whole wall so all six moving columns fit the frame.
+      const narrow = window.innerWidth <= 1000;
+      const fit = narrow ? Math.min(1, (window.innerWidth - 20) / WALL_FIT_WIDTH) : 1;
+      root.current.style.setProperty('--wall-scale', fit.toFixed(3));
     };
     applyTilt();
     window.addEventListener('resize', applyTilt);
@@ -100,7 +106,11 @@ export default function Hero({ ready }) {
                   <div className="wall__track">
                     {[...col, ...col].map((f, i) => (
                       <figure className="wall__card" key={`${f.id}-${i}`}>
-                        <img src={f.src} alt="" draggable="false" decoding="async" />
+                        {f.type === 'video' ? (
+                          <video src={f.src} autoPlay muted loop playsInline preload="auto" aria-hidden="true" />
+                        ) : (
+                          <img src={f.src} alt="" draggable="false" decoding="async" />
+                        )}
                       </figure>
                     ))}
                   </div>

@@ -86,29 +86,19 @@ export const WORK = [
   {
     key: 'scripted',
     videos: [
-      ['NdKiG7Nb-ZU', 'ENO Chewy Bites', 'Bengali film, 60 seconds'],
       ['2_artdz7u7o', 'Dabur Chyawanprash', 'Parampara Sehat Ki · Chhath Puja'],
       ['1fT4Yi2Gb5g', 'Dabur Honey', '#AcchaiKiMithaas · Ganesh Chaturthi'],
       ['AtRc3Yj6Jbg', 'Dabur Red Paste', 'Mishti Khobor · #ChiboteThakun'],
       ['dkOf3qE16f0', 'Swiggy', 'Durga Pujo isn’t complete without bhog and new clothes'],
       ['wSsYxn9F8hA', 'Dabur Ratnaprash', 'Ganesh Modak · #ImmunityKaVardaan · Marathi'],
       ['-h-M0Ef5-Pg', 'Réal Fruit Power', 'Rakshabandhan'],
-      ['xsGZM-MBo-g', 'Aashirvaad Svasti Ghee', 'The Smell of Onam'],
-      ['7UxNXkoxCvM', 'Dabur Red Paste', 'Jaago Tumi Jaago · Durga Puja'],
       ['53hjspAk1so', 'Lenskart BLU', '#BLUWaaliDiwali'],
       ['WssiuukgKKg', 'Lenskart', 'Nazar Ghati Durghatna Ghati 2.0 × Virtual AR'],
       ['bo_hhB2MaWA', 'Lenskart', 'Nazar Ghati Durghatna Ghati 2.0 — second cut'],
-      ['ITLV_y66KgM', 'Aditya Birla Capital', 'Personal Loan · #EkNayiShuruaat'],
-      ['TDa72iVCBEo', 'Aditya Birla Capital', 'Home Loan · #EkNayiShuruaat'],
-      ['NKSa3wse7jU', 'Aditya Birla Capital', 'Business Loan · #EkNayiShuruaat'],
-      ['c3DpbFkLwCY', 'Pro-ease', 'Women’s Day · #BadalKarDekho'],
-      ['fnitYgM114o', 'Pro-ease', 'Happy Mother’s Day'],
       ['qx6xK9u3Gys', 'Nykaa', 'Rakshak · a Raksha Bandhan special'],
       ['v0ZCh59fd_Q', 'Dabur Ratnaprash', 'Kashmiri Kesar'],
       ['dQJVfjn4Ujs', 'Nuvoco', 'Azaadi Badi Khaas Hai · 75 years of Independence'],
       ['W7eT0eRLLDs', 'Dabur Red Paste', 'Say No To Passive Smoking · World No Tobacco Day'],
-      ['DKbydhXXB1Q', 'Dabur Red Paste', 'Desh Ke Laal · Independence Day'],
-      ['U__HS5Ta3M4', 'Berger Paints', 'Armaano Ki Deewar · Children’s Day'],
       ['abelI2Osvn8', 'Dabur Lal Tail', 'Durga Puja'],
       ['hehcWbvJ2Zc', AIC, 'Scripted film'],
       ['0XSS25o5JpA', 'Srijan Realty', 'Bada Ghar · #ZarooriHai'],
@@ -202,7 +192,6 @@ export const WORK = [
     key: 'corporate',
     videos: [
       ['mWD4WxjBhWE', 'Dabur', 'Sapno ki Udaan · Dabur Strengthens India, Pithampur'],
-      ['6_1yBSH-nIU', 'Dabur', 'Dabur Herbs'],
       ['CWbub1oQ1uA', 'Zetwerk', 'Aerospace & Defence'],
       ['gbmSZ7NdwtE', 'Zetwerk', 'Water & Irrigation'],
       ['fgclT0QvCYA', 'Zetwerk', 'Transmission & Distribution'],
@@ -223,3 +212,10 @@ export const WORK = [
 export const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 export const ytWatch = (id) => `https://www.youtube.com/watch?v=${id}`;
 export const ytEmbed = (id) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+export const instaEmbed = (url) => {
+  if (!url) return '';
+  const match = url.match(/(?:reels?|p)\/([A-Za-z0-9_-]+)/);
+  const id = match ? match[1] : '';
+  return id ? `https://www.instagram.com/reel/${id}/embed/` : url;
+};
+

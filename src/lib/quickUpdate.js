@@ -74,6 +74,53 @@ const subscribeRewards = (fn) => {
 
 export const useRewards = () => useSyncExternalStore(subscribeRewards, () => rewards);
 
+/*
+ * Quick-update problem headline: { line1, line2 }
+ * Defaults to "Made in Mumbai." and "Dies in Madurai."
+ */
+export const DEFAULT_PROBLEM_HEADLINE = {
+  line1: 'Made in Mumbai.',
+  line2: 'Dies in Madurai.',
+};
+
+const HEADLINE_KEY = 'bcf:problem-headline';
+
+const readHeadline = () => {
+  try {
+    const raw = localStorage.getItem(HEADLINE_KEY);
+    return raw ? { ...DEFAULT_PROBLEM_HEADLINE, ...JSON.parse(raw) } : DEFAULT_PROBLEM_HEADLINE;
+  } catch {
+    return DEFAULT_PROBLEM_HEADLINE;
+  }
+};
+
+let headline = readHeadline();
+const headlineSubs = new Set();
+
+export function saveProblemHeadline(next) {
+  headline = {
+    line1: next?.line1 !== undefined ? next.line1 : DEFAULT_PROBLEM_HEADLINE.line1,
+    line2: next?.line2 !== undefined ? next.line2 : DEFAULT_PROBLEM_HEADLINE.line2,
+  };
+  try {
+    localStorage.setItem(HEADLINE_KEY, JSON.stringify(headline));
+  } catch {
+    /* quota or blocked */
+  }
+  headlineSubs.forEach((fn) => fn());
+}
+
+export function resetProblemHeadline() {
+  saveProblemHeadline(DEFAULT_PROBLEM_HEADLINE);
+}
+
+const subscribeHeadline = (fn) => {
+  headlineSubs.add(fn);
+  return () => headlineSubs.delete(fn);
+};
+
+export const useDefaultProblemHeadline = () => useSyncExternalStore(subscribeHeadline, () => headline);
+
 // `start`/`end` are datetime-local strings ("2026-11-01T18:00"), read as local time.
 export const eventStatus = (e, now = Date.now()) => {
   if (e.start && now < new Date(e.start).getTime()) return 'scheduled';
@@ -91,6 +138,30 @@ export function useLiveEvents() {
   }, []);
   // Read the clock at filter time, not at mount: an event saved "from now" must count as live immediately.
   return useMemo(() => all.filter((e) => eventStatus(e) === 'live'), [all, tick]);
+}
+
+/**
+ * Returns the effective problem section headline:
+ * If an active live event has custom headlineFirst or headlineSecond, that takes priority.
+ * Otherwise, the saved default problem headline is returned.
+ */
+export function useProblemHeadline() {
+  const liveEvents = useLiveEvents();
+  const defaultHeadline = useDefaultProblemHeadline();
+
+  const activeWithCustomHeadline = liveEvents.find(
+    (e) => (e.headlineFirst && e.headlineFirst.trim()) || (e.headlineSecond && e.headlineSecond.trim())
+  );
+
+  if (activeWithCustomHeadline) {
+    return {
+      line1: activeWithCustomHeadline.headlineFirst?.trim() || defaultHeadline.line1,
+      line2: activeWithCustomHeadline.headlineSecond?.trim() || defaultHeadline.line2,
+      isLiveOverride: true,
+    };
+  }
+
+  return defaultHeadline;
 }
 
 /** Downscale an uploaded photo to a JPEG data URL small enough for localStorage. */

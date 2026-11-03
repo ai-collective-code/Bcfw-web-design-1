@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { lockScroll } from '../lib/motion.js';
 import {
-  QUICK_CODE, MAX_EVENTS, useEvents, saveEvents, shrinkImage, eventStatus,
+  QUICK_CODE, QUICK_EMAIL, MAX_EVENTS, useEvents, saveEvents, shrinkImage, eventStatus,
   useRewards, saveRewards, DEFAULT_REWARDS, resetRewards,
   useDefaultProblemHeadline, saveProblemHeadline, resetProblemHeadline,
 } from '../lib/quickUpdate.js';
@@ -116,6 +116,8 @@ export default function QuickUpdate() {
   const [step, setStep] = useState('code');
   const [tab, setTab] = useState('events'); // 'events' | 'rewards'
   const [code, setCode] = useState('');
+  const [empName, setEmpName] = useState('');
+  const [empEmail, setEmpEmail] = useState('');
   const [error, setError] = useState('');
 
   // Events state
@@ -210,6 +212,8 @@ export default function QuickUpdate() {
 
   const unlock = (e) => {
     e.preventDefault();
+    if (!empName.trim()) { setError('Enter your employee name.'); return; }
+    if (empEmail.trim().toLowerCase() !== QUICK_EMAIL) { setError('Use the official BCF email address.'); return; }
     if (code.trim() !== QUICK_CODE) { setError('Wrong code. Try again.'); return; }
     const list = saved.map((r) => ({
       start: '',
@@ -392,10 +396,18 @@ export default function QuickUpdate() {
               <form onSubmit={unlock} className="qu__form">
                 <span className="qu__badge">Step 1 of 2</span>
                 <h2 id="qu-title">Admin Panel</h2>
-                <p>Enter the access code to edit site events and rewards.</p>
+                <p>Enter your details and the access code to edit site events and rewards.</p>
                 <p className="qu__official"><b>🔒</b> For the official BCF team only.</p>
                 <input
-                  autoFocus type="password" value={code} placeholder="Access code"
+                  autoFocus type="text" value={empName} placeholder="Employee name" autoComplete="name"
+                  onChange={(e) => { setEmpName(e.target.value); setError(''); }}
+                />
+                <input
+                  type="email" value={empEmail} placeholder="Official email" autoComplete="email"
+                  onChange={(e) => { setEmpEmail(e.target.value); setError(''); }}
+                />
+                <input
+                  type="password" value={code} placeholder="Employee access code" autoComplete="off"
                   onChange={(e) => { setCode(e.target.value); setError(''); }}
                 />
                 {error && <span className="qu__err">{error}</span>}

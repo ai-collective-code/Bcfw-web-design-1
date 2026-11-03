@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
  * until a real backend stores them.
  */
 export const QUICK_CODE = 'AIC_2026';
+export const QUICK_EMAIL = 'debojit.aic@gmail.com';
 export const MAX_EVENTS = 4;
 const KEY = 'bcf:quick-update';
 

@@ -101,7 +101,7 @@ function Film({ v, onPlay }) {
         </button>
       </div>
       <figcaption>
-        <span className="mono">{v.brand}</span>
+        {v.brand !== 'ICE Media Lab' && <span className="mono">{v.brand}</span>}
         <b>{v.title}</b>
       </figcaption>
     </figure>
@@ -447,10 +447,12 @@ export default function Folio() {
           >
             <div className="video-modal__bar">
               <div className="video-modal__titles">
-                <span className="mono video-modal__brand">
-                  {activeVideo.brand}
-                  {activeVideo.type === 'reel' && ' · Instagram Reel'}
-                </span>
+                {(activeVideo.brand !== 'ICE Media Lab' || activeVideo.type === 'reel') && (
+                  <span className="mono video-modal__brand">
+                    {activeVideo.brand !== 'ICE Media Lab' && activeVideo.brand}
+                    {activeVideo.type === 'reel' && ' · Instagram Reel'}
+                  </span>
+                )}
                 <h3 id="video-modal-title" className="video-modal__heading">{activeVideo.title}</h3>
               </div>
               <div className="video-modal__actions">

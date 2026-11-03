@@ -80,6 +80,7 @@ export function buildMail(d, { from, to }) {
 export async function handleInquiry(req, { transport, from, to, preview = false }) {
   if (req.method !== 'POST') return json(405, { ok: false, error: 'method' });
 
+  if (Number(req.headers.get('content-length')) > MAX_BODY) return json(413, { ok: false, error: 'too-large' });
   const raw = await req.text();
   if (raw.length > MAX_BODY) return json(413, { ok: false, error: 'too-large' });
   let body;

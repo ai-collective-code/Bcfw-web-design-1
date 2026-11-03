@@ -371,18 +371,11 @@ function Drawer({ f, onClose, onStep, position }) {
     lockScroll(true);
     panel.current?.querySelector('.drw__btn-close')?.focus();
     const key = (e) => {
-      if (e.key === 'Escape') {
-        if (popup) {
-          e.stopPropagation();
-          setPopup(null);
-          return;
-        }
-        onClose();
-      }
-      if (!popup) {
-        if (e.key === 'ArrowRight') onStep(1);
-        if (e.key === 'ArrowLeft') onStep(-1);
-      }
+      // While a popup is open it owns the keyboard (its own Escape handler closes it).
+      if (popup) return;
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') onStep(1);
+      if (e.key === 'ArrowLeft') onStep(-1);
       if (e.key === 'Tab') {
         const items = panel.current.querySelectorAll('a[href], button');
         const first = items[0];

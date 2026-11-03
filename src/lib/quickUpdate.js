@@ -12,7 +12,10 @@ export const MAX_EVENTS = 4;
 const KEY = 'bcf:quick-update';
 
 const read = () => {
-  try { return JSON.parse(localStorage.getItem(KEY)) ?? []; } catch { return []; }
+  try {
+    const v = JSON.parse(localStorage.getItem(KEY));
+    return Array.isArray(v) ? v : [];
+  } catch { return []; }
 };
 
 let events = read();
@@ -49,7 +52,8 @@ const REWARDS_KEY = 'bcf:rewards';
 const readRewards = () => {
   try {
     const raw = localStorage.getItem(REWARDS_KEY);
-    return raw ? JSON.parse(raw) : DEFAULT_REWARDS;
+    const v = raw ? JSON.parse(raw) : null;
+    return Array.isArray(v) ? v : DEFAULT_REWARDS;
   } catch {
     return DEFAULT_REWARDS;
   }

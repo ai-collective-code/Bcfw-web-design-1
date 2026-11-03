@@ -3,9 +3,25 @@
  * Enables live Wikipedia browsing within modal sheets without external redirects.
  */
 
+/** Remote HTML is injected with dangerouslySetInnerHTML, so drop anything executable first. */
+function sanitize(html) {
+  if (typeof DOMParser === 'undefined') return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script, style, iframe, object, embed, form, link, meta, base').forEach((n) => n.remove());
+  doc.querySelectorAll('*').forEach((el) => {
+    [...el.attributes].forEach((a) => {
+      const v = a.value.trim().toLowerCase();
+      if (a.name.startsWith('on') || ((a.name === 'href' || a.name === 'src' || a.name === 'xlink:href') && v.startsWith('javascript:'))) {
+        el.removeAttribute(a.name);
+      }
+    });
+  });
+  return doc.body.innerHTML;
+}
+
 export function cleanWikiHtml(html) {
   if (!html) return '';
-  return html
+  return sanitize(html)
     // Fix protocol-relative URLs for images and styles
     .replace(/src="\/\//g, 'src="https://')
     .replace(/srcset="\/\//g, 'srcset="https://')

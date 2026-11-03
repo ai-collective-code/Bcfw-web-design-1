@@ -1,13 +1,13 @@
 import { FESTIVALS } from './festivals.js';
 import { CULTURE_IMAGES } from './cultureImages.js';
-import nuvoco01 from '../assets/Nuvoco/N_01.png';
-import nuvoco02 from '../assets/Nuvoco/N-02.png';
-import nuvoco03 from '../assets/Nuvoco/N-03.png';
-import lalTail1 from '../assets/Lal_tail_Mothers day/L_1.png';
-import lalTail4 from '../assets/Lal_tail_Mothers day/L_4.png';
-import lalTail2 from '../assets/Lal_tail_Mothers day/L-2.png';
-import lalTail3 from '../assets/Lal_tail_Mothers day/L-3.png';
-import lalTail5 from '../assets/Lal_tail_Mothers day/L-5.png';
+import nuvoco01 from '../assets/Nuvoco/N_01.webp';
+import nuvoco02 from '../assets/Nuvoco/N-02.webp';
+import nuvoco03 from '../assets/Nuvoco/N-03.webp';
+import lalTail1 from '../assets/Lal_tail_Mothers day/L_1.webp';
+import lalTail4 from '../assets/Lal_tail_Mothers day/L_4.webp';
+import lalTail2 from '../assets/Lal_tail_Mothers day/L-2.webp';
+import lalTail3 from '../assets/Lal_tail_Mothers day/L-3.webp';
+import lalTail5 from '../assets/Lal_tail_Mothers day/L-5.webp';
 
 /** Wikimedia Commons thumbnail. 500 and 960 are standard steps the CDN keeps warm. */
 export const wm = (file, w = 960) => `https://commons.wikimedia.org/wiki/Special:FilePath/${file}?width=${w}`;
@@ -102,18 +102,18 @@ export const RED_PASTE_IMAGES = Object.entries(
 
 // Dedicated Nuvoco images for the 6th slide exclusively (N_01, N-02, N-03)
 export const NUVOCO_IMAGES = [
-  { id: 'N_01.png', src: nuvoco01 },
-  { id: 'N-02.png', src: nuvoco02 },
-  { id: 'N-03.png', src: nuvoco03 },
+  { id: 'N_01.webp', src: nuvoco01 },
+  { id: 'N-02.webp', src: nuvoco02 },
+  { id: 'N-03.webp', src: nuvoco03 },
 ];
 
 // Dedicated 5 images for the 5th slide exclusively (L_1, L_4, L-2, L-3, L-5)
 export const LAL_TAIL_IMAGES = [
-  { id: 'L_1.png', src: lalTail1 },
-  { id: 'L_4.png', src: lalTail4 },
-  { id: 'L-2.png', src: lalTail2 },
-  { id: 'L-3.png', src: lalTail3 },
-  { id: 'L-5.png', src: lalTail5 },
+  { id: 'L_1.webp', src: lalTail1 },
+  { id: 'L_4.webp', src: lalTail4 },
+  { id: 'L-2.webp', src: lalTail2 },
+  { id: 'L-3.webp', src: lalTail3 },
+  { id: 'L-5.webp', src: lalTail5 },
 ];
 
 // All other production stills strictly exclude S_1 through S-5, Ganguly shoot stills,

@@ -107,7 +107,7 @@ export default function Hero({ ready }) {
                     {[...col, ...col].map((f, i) => (
                       <figure className="wall__card" key={`${f.id}-${i}`}>
                         {f.type === 'video' ? (
-                          <video src={f.src} autoPlay muted loop playsInline preload="auto" aria-hidden="true" />
+                          <video src={f.src} autoPlay={!prefersReducedMotion()} muted loop playsInline preload="auto" aria-hidden="true" />
                         ) : (
                           <img src={f.src} alt="" draggable="false" decoding="async" />
                         )}

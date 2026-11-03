@@ -51,7 +51,8 @@ function checkIsDarkUnderLogo(logoEl) {
         lumCache.set(img, isDark);
         return isDark;
       } catch {
-        // Continue
+        // Cross-origin image: the canvas is tainted. Remember that, so it is not retried every tick.
+        lumCache.set(img, false);
       }
     }
 

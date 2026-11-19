@@ -338,20 +338,20 @@ export const INDIA_LANGUAGES = [
 export const PAINS = [
   {
     n: '01',
-    head: 'Dubbed, not made',
-    body: 'One Hindi master, dubbed twelve ways. Audiences can tell in a second when a brand is talking at them instead of to them.',
+    head: 'This Christmas, let’s Make Your Brand the Gift Everyone Remembers.',
+    body: 'Christmas is more than a season of celebration; it’s a time when emotions turn into memories and little moments become lasting impressions. From the joy of exchanging gifts to the warmth of festive gatherings, every celebration brings an opportunity for brands to connect with people in meaningful ways. This Christmas, let’s make your brand more than just a part of the celebration — let’s make it the gift everyone remembers.',
     src: christmasImg,
   },
   {
     n: '02',
-    head: 'Late to the moment',
-    body: 'Navratri, Eid, a match-winning six, a viral local event at 3pm. A generic post three days later is worse than no post at all.',
+    head: 'This Winter, Let’s Make Your Brand the Vibe Everyone Remembers.',
+    body: 'One season, endless vibes. From cozy winter nights to festive fits and unforgettable moments, winter is all about good energy, warm connections, and memories worth keeping. Because the best part of the season isn’t just the weather, it’s the moments we create together.',
     src: winterImg,
   },
   {
     n: '03',
-    head: 'Culture by assumption',
-    body: 'Saffron means one thing in Varanasi and another in Mysuru. Guessing at culture reads as a stock photo — and gets scrolled past.',
+    head: 'This Valentine’s Day, Make Your Brand Someone’s Favourite Love Story.',
+    body: 'Valentine’s Day is all about love, meaningful connections, and unforgettable gestures. From heartfelt surprises to little moments that speak volumes, it’s the perfect occasion for brands to connect with audiences emotionally. Let’s create campaigns that capture hearts, spark conversations, and make your brand the one they fall in love with.',
     src: valentinesImg,
   },
 ];

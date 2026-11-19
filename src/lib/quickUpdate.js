@@ -25,6 +25,7 @@ export function saveEvents(next) {
   events = next;
   try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* quota or blocked storage: keep in memory */ }
   subs.forEach((fn) => fn());
+  schedulePublish();
 }
 
 const subscribe = (fn) => { subs.add(fn); return () => subs.delete(fn); };
@@ -76,6 +77,7 @@ export function saveRewards(next) {
   rewards = next;
   try { localStorage.setItem(REWARDS_KEY, JSON.stringify(next)); } catch { /* quota or blocked storage */ }
   rewardSubs.forEach((fn) => fn());
+  schedulePublish();
 }
 
 export function resetRewards() {
@@ -123,6 +125,7 @@ export function saveProblemHeadline(next) {
     /* quota or blocked */
   }
   headlineSubs.forEach((fn) => fn());
+  schedulePublish();
 }
 
 export function resetProblemHeadline() {
@@ -196,4 +199,97 @@ export function shrinkImage(file, max = 900) {
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read image')); };
     img.src = url;
   });
+}
+
+/*
+ * Shared storage. The three stores above are only a per-browser cache; the source of truth is the
+ * server (/api/content), so an edit made in the Admin Panel reaches every window, device and
+ * visitor. Visitors pull the saved content on load, on focus and every minute; the admin's saves
+ * are pushed after the panel has been unlocked with credentials the server checks itself.
+ */
+const API = '/api/content';
+const post = (body) => fetch(API, {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify(body),
+  cache: 'no-store',
+});
+const asJson = (res) => res.json().catch(() => null);
+
+let version = 0;      // the server's updatedAt that this page last saw
+let dirty = false;    // local edits the server has not confirmed yet: do not overwrite them
+let adminAuth = null; // { email, code, name } while the Admin Panel is unlocked
+let publishAuth = null;
+let publishTimer = 0;
+
+/** The Admin Panel unlocked (credentials) or closed (null). */
+export const setAdminAuth = (auth) => { adminAuth = auth; };
+
+let publishState = { state: 'idle', message: '' };
+const publishSubs = new Set();
+const setPublish = (state, message = '') => { publishState = { state, message }; publishSubs.forEach((fn) => fn()); };
+export const usePublishStatus = () => useSyncExternalStore((fn) => { publishSubs.add(fn); return () => publishSubs.delete(fn); }, () => publishState);
+
+/** Asks the server whether these admin credentials are valid: 'ok', 'denied', or 'offline' (no backend). */
+export async function verifyAdmin(email, code) {
+  try {
+    const res = await post({ action: 'verify', email, code });
+    const out = await asJson(res);
+    if (res.ok && out?.ok) return 'ok';
+    if (res.status === 401) return 'denied';
+    return 'offline';
+  } catch { return 'offline'; }
+}
+
+function schedulePublish() {
+  if (!adminAuth) return;
+  publishAuth = adminAuth;
+  dirty = true;
+  setPublish('saving', 'Publishing to the live site…');
+  clearTimeout(publishTimer);
+  publishTimer = setTimeout(publishNow, 300);
+}
+
+async function publishNow() {
+  const failed = (why) => setPublish('error', `${why} The change is saved in this browser only.`);
+  try {
+    const res = await post({ action: 'publish', ...publishAuth, data: { events, rewards, headline } });
+    const out = await asJson(res);
+    if (res.ok && out?.ok) {
+      version = out.updatedAt;
+      dirty = false;
+      setPublish('saved', 'Published. Visitors will see this within a minute.');
+    } else if (res.status === 401) failed('Not authorised.');
+    else if (res.status === 413) failed('Too large to publish: use smaller images.');
+    else failed('Could not reach the server.');
+  } catch { failed('Could not reach the server.'); }
+}
+
+/** Fetch the published content and, if it changed, replace what this page shows. */
+export async function pullContent() {
+  if (dirty) return;
+  try {
+    const res = await post({ action: 'read', since: version });
+    const out = await asJson(res);
+    if (!res.ok || !out?.ok || dirty || out.unchanged || !out.data) return;
+    version = out.updatedAt;
+    events = Array.isArray(out.data.events) ? out.data.events : [];
+    rewards = Array.isArray(out.data.rewards) ? out.data.rewards : DEFAULT_REWARDS;
+    headline = { ...DEFAULT_PROBLEM_HEADLINE, ...(out.data.headline || {}) };
+    try {
+      localStorage.setItem(KEY, JSON.stringify(events));
+      localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards));
+      localStorage.setItem(HEADLINE_KEY, JSON.stringify(headline));
+    } catch { /* cache only */ }
+    subs.forEach((fn) => fn());
+    rewardSubs.forEach((fn) => fn());
+    headlineSubs.forEach((fn) => fn());
+  } catch { /* offline or no backend: keep what is cached */ }
+}
+
+if (typeof window !== 'undefined') {
+  pullContent();
+  setInterval(pullContent, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) pullContent(); });
+  window.addEventListener('focus', pullContent);
 }

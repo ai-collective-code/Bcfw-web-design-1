@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { lockScroll } from '../lib/motion.js';
 import {
-  QUICK_CODE, QUICK_EMAIL, MAX_EVENTS, useEvents, saveEvents, shrinkImage, eventStatus,
+  QUICK_CODE, QUICK_EMAIL, MAX_EVENTS, verifyAdmin, setAdminAuth, usePublishStatus, useEvents, saveEvents, shrinkImage, eventStatus,
   useRewards, saveRewards, DEFAULT_REWARDS, resetRewards,
   useDefaultProblemHeadline, saveProblemHeadline, resetProblemHeadline,
 } from '../lib/quickUpdate.js';
@@ -112,6 +112,7 @@ export default function QuickUpdate() {
   const saved = useEvents();
   const savedRewards = useRewards();
   const defaultHeadline = useDefaultProblemHeadline();
+  const pub = usePublishStatus();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState('code');
   const [tab, setTab] = useState('events'); // 'events' | 'rewards'
@@ -143,7 +144,7 @@ export default function QuickUpdate() {
     lockScroll(true);
     const esc = (e) => e.key === 'Escape' && setOpen(false);
     window.addEventListener('keydown', esc);
-    return () => { lockScroll(false); window.removeEventListener('keydown', esc); };
+    return () => { lockScroll(false); window.removeEventListener('keydown', esc); setAdminAuth(null); };
   }, [open]);
 
   useEffect(() => {
@@ -210,11 +211,18 @@ export default function QuickUpdate() {
     setTab(nextTab);
   };
 
-  const unlock = (e) => {
+  const unlock = async (e) => {
     e.preventDefault();
     if (!empName.trim()) { setError('Enter your employee name.'); return; }
-    if (empEmail.trim().toLowerCase() !== QUICK_EMAIL) { setError('Use the official BCF email address.'); return; }
-    if (code.trim() !== QUICK_CODE) { setError('Wrong code. Try again.'); return; }
+    // The server is the judge; the built-in values only apply when no backend is reachable (plain static preview).
+    const verdict = await verifyAdmin(empEmail.trim(), code.trim());
+    if (verdict === 'denied') { setError('Wrong email or access code. Try again.'); return; }
+    if (verdict === 'offline') {
+      if (empEmail.trim().toLowerCase() !== QUICK_EMAIL) { setError('Use the official BCF email address.'); return; }
+      if (code.trim() !== QUICK_CODE) { setError('Wrong code. Try again.'); return; }
+    } else {
+      setAdminAuth({ email: empEmail.trim(), code: code.trim(), name: empName.trim() });
+    }
     const list = saved.map((r) => ({
       start: '',
       end: '',
@@ -444,6 +452,10 @@ export default function QuickUpdate() {
                     </button>
                   </div>
                 </div>
+
+                {pub.state !== 'idle' && (
+                  <span className={pub.state === 'error' ? 'qu__err' : 'qu__hint'} role="status">{pub.message}</span>
+                )}
 
                 {tab === 'events' ? (
                   <>

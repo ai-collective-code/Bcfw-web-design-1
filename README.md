@@ -15,6 +15,15 @@ npm run build    # static output in dist/
 
 Registered in `.claude/launch.json` as **Bharat Utsav**.
 
+## Admin Panel content (backend)
+
+Events, rewards and the problem headline edited in the Admin Panel are saved on the server
+(`netlify/functions/content.mjs`, Netlify Blobs in production, `.local-content.json` in `npm run dev`),
+so every visitor, window and device sees them within a minute. The server checks the admin email and
+access code itself: set `ADMIN_EMAIL` and `ADMIN_CODE` in Netlify (Site configuration → Environment
+variables) so the real code is not the default in the repo. Without a backend (a plain static preview)
+edits fall back to this browser only.
+
 ## Query emails (backend)
 
 Every CTA scrolls to the brief builder; its step 4 posts the brief and the visitor’s details to

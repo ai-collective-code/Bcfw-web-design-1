@@ -30,6 +30,16 @@ export function saveEvents(next) {
 const subscribe = (fn) => { subs.add(fn); return () => subs.delete(fn); };
 export const useEvents = () => useSyncExternalStore(subscribe, () => events);
 
+// An edit made in another tab or window of this site arrives as a `storage` event;
+// without this the open page keeps showing what it read at load until it is refreshed.
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key === KEY || e.key === null) { events = read(); subs.forEach((fn) => fn()); }
+    if (e.key === REWARDS_KEY || e.key === null) { rewards = readRewards(); rewardSubs.forEach((fn) => fn()); }
+    if (e.key === HEADLINE_KEY || e.key === null) { headline = readHeadline(); headlineSubs.forEach((fn) => fn()); }
+  });
+}
+
 /*
  * Quick-update rewards & awards: list of { id, name, image }
  * Saved in browser localStorage, falls back to default 10 award platforms.

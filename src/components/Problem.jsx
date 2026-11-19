@@ -47,13 +47,14 @@ export default function Problem() {
         </SectionHead>
 
         <div className="prob__grid">
-          {PAINS.map((p, i) => {
+          {Array.from({ length: Math.max(PAINS.length, liveEvents.length) }, (_, i) => {
+            const p = PAINS[i];
             const live = liveEvents[i];
-            const img = live?.image || wm(p.img, 500);
-            const head = live?.catchyLine?.trim() ? live.catchyLine : p.head;
-            const body = live?.description?.trim() ? live.description : p.body;
+            const img = live?.image || (p && wm(p.img, 500));
+            const head = live?.catchyLine?.trim() ? live.catchyLine : (p?.head ?? live.moment);
+            const body = live?.description?.trim() ? live.description : (p?.body ?? `${live.format} · ${live.language}`);
 
-            return <PainCard key={p.n} n={Number(p.n)} img={img} head={head} body={body} />;
+            return <PainCard key={p ? p.n : `live-${i}`} n={p ? Number(p.n) : i + 1} img={img} head={head} body={body} />;
           })}
         </div>
       </div>

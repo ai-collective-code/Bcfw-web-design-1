@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import SectionHead from './SectionHead.jsx';
-import { PAINS, wm } from '../data/content.js';
+import { PAINS } from '../data/content.js';
 import { useLiveEvents, useProblemHeadline } from '../lib/quickUpdate.js';
 import './Problem.css';
 
@@ -50,7 +50,7 @@ export default function Problem() {
           {Array.from({ length: Math.max(PAINS.length, liveEvents.length) }, (_, i) => {
             const p = PAINS[i];
             const live = liveEvents[i];
-            const img = live?.image || (p && wm(p.img, 500));
+            const img = live?.image || p?.src;
             const head = live?.catchyLine?.trim() ? live.catchyLine : (p?.head ?? live.moment);
             const body = live?.description?.trim() ? live.description : (p?.body ?? `${live.format} · ${live.language}`);
 

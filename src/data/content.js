@@ -8,6 +8,9 @@ import lalTail4 from '../assets/Lal_tail_Mothers day/L_4.webp';
 import lalTail2 from '../assets/Lal_tail_Mothers day/L-2.webp';
 import lalTail3 from '../assets/Lal_tail_Mothers day/L-3.webp';
 import lalTail5 from '../assets/Lal_tail_Mothers day/L-5.webp';
+import christmasImg from '../assets/events/christmas.jpeg';
+import winterImg from '../assets/events/winter.jpeg';
+import valentinesImg from '../assets/events/valentines.jpeg';
 
 /** Wikimedia Commons thumbnail. 500 and 960 are standard steps the CDN keeps warm. */
 export const wm = (file, w = 960) => `https://commons.wikimedia.org/wiki/Special:FilePath/${file}?width=${w}`;
@@ -337,19 +340,19 @@ export const PAINS = [
     n: '01',
     head: 'Dubbed, not made',
     body: 'One Hindi master, dubbed twelve ways. Audiences can tell in a second when a brand is talking at them instead of to them.',
-    img: festivalById(19).file,
+    src: christmasImg,
   },
   {
     n: '02',
     head: 'Late to the moment',
     body: 'Navratri, Eid, a match-winning six, a viral local event at 3pm. A generic post three days later is worse than no post at all.',
-    img: festivalById(11).file,
+    src: winterImg,
   },
   {
     n: '03',
     head: 'Culture by assumption',
     body: 'Saffron means one thing in Varanasi and another in Mysuru. Guessing at culture reads as a stock photo — and gets scrolled past.',
-    img: festivalById(9).file,
+    src: valentinesImg,
   },
 ];
 

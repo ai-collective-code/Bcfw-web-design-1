@@ -5,3 +5,7 @@ dist
 .env.*
 !.env.example
 .netlify
+
+# Real secrets for the Hostinger PHP backend (hostinger/api/config.sample.php is the template)
+hostinger/api/config.php
+hostinger/api/data/content.json

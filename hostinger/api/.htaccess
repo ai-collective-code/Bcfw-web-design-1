@@ -1,0 +1,17 @@
+# Routes the site's /api/inquiry and /api/content calls to the PHP files, and hides the secrets.
+# Lives inside api/ only, so it never touches the site's main .htaccess.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^inquiry/?$ inquiry.php [L]
+  RewriteRule ^content/?$ content.php [L]
+</IfModule>
+
+<FilesMatch "^(config\.php|config\.sample\.php|_lib\.php)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+  </IfModule>
+</FilesMatch>
